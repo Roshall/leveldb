@@ -18,6 +18,9 @@
 #include "table/two_level_iterator.h"
 #include "util/coding.h"
 #include "util/logging.h"
+#include "util/compactionOnGPU.cuh"
+
+
 
 namespace leveldb {
 
@@ -1475,6 +1478,81 @@ Compaction* VersionSet::CompactRange(int level, const InternalKey* begin,
   c->inputs_[0] = inputs;
   SetupOtherInputs(c);
   return c;
+}
+
+bool VersionSet::Prepare4GPU(Compaction* c, SequenceNumber smallest_snapshot) {
+  Status s;
+  bool success = false;
+  // put all the sstable together
+  int number = c->inputs_[0].size() + c->inputs_[1].size();
+  auto *compator = new gpu::GPUCompactor();
+  u_offset *table_offset;
+  compator->unifiedAlloc(reinterpret_cast<void**>(&table_offset), sizeof(u_offset)*(number+1));
+//  auto table_offset = new u_offset[number+1];
+  u_offset *level_offset;
+  compator->unifiedAlloc(reinterpret_cast<void**>(&level_offset), sizeof(u_offset)*(3));
+//  auto level_offset = new u_offset[3];
+  table_offset[0] = 0;
+  level_offset[0] = 0;
+  number = 1;
+  for (int which = 0; which < 2; ++which) {
+    for (auto & file : c->inputs_[which]) {
+      table_offset[number] = static_cast<int>(file->file_size)
+                             + table_offset[number - 1];
+      ++number;
+    }
+    level_offset[which+1] = table_offset[number-1];
+  }
+//  char* data = new char[level_offset[2]];
+  char* data ;
+  compator->unifiedAlloc(reinterpret_cast<void**>(&data), sizeof(char)*level_offset[2]);
+  number = 0;
+
+  for (auto & input : c->inputs_) {
+    if (!input.empty()) {
+
+      const std::vector<FileMetaData*>& files = input;
+      // find file name according to sstable number
+      for (auto& f : files) {
+        std::string fName = TableFileName(dbname_, f->number);
+        SequentialFile* file = nullptr;
+        s = env_->NewSequentialFile(fName, &file);
+
+        if (!s.ok()) {
+          std::string old_fName = SSTTableFileName(dbname_, f->number);
+          s = env_->NewSequentialFile(old_fName, &file);
+          if (!s.ok()) {
+            if (s.IsNotFound()) {
+              fprintf(stderr, "CompactionOnGPU: %s not found.",
+                      old_fName.c_str());
+              goto done;
+            }
+          }
+        }
+        // read data
+        uint64_t file_size = f->file_size;
+        char* buffer = data + number;
+        ++number;
+        Slice data_slice;
+        file->Read(file_size, &data_slice, buffer);
+        if (data_slice.size() != file_size) {
+          fprintf(stderr, "%s: size didn't match", __func__);
+          goto done;
+        }
+      }
+//      auto *cmptor = new gpu::GPUCompactor(data, level_offset, table_offset,
+//                                      number);
+      compator->setInputData(data);
+      compator->setInputTableOffset(table_offset);
+      compator->setInputLevelOffset(level_offset);
+      compator->setHasLevel0(c->level() == 0);
+      compator->DoCompaction();
+
+      success = true;
+    }
+  }
+  done:
+    return success;
 }
 
 Compaction::Compaction(const Options* options, int level)

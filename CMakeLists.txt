@@ -2,9 +2,15 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.19)
 # Keep the version below in sync with the one in db.h
-project(leveldb VERSION 1.23.0 LANGUAGES C CXX)
+if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
+  set(CMAKE_CUDA_ARCHITECTURES 61)
+endif()
+#set(CUDA_RUNTIME_LIBRARY Shared)
+
+#project(leveldb VERSION 1.23.0 LANGUAGES C CXX)
+project(leveldb VERSION 1.23.0 LANGUAGES C CXX CUDA)
 
 # C standard can be overridden when this is used as a sub-project.
 if(NOT CMAKE_C_STANDARD)
@@ -189,6 +195,7 @@ target_sources(leveldb
     "util/options.cc"
     "util/random.h"
     "util/status.cc"
+#    "util/compactionOnGPU.cu"
 
   # Only CMake 3.3+ supports PUBLIC sources in targets exported by "install".
   $<$<VERSION_GREATER:CMAKE_VERSION,3.2>:PUBLIC>
@@ -238,6 +245,9 @@ target_include_directories(leveldb
 
 set_target_properties(leveldb
   PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
+set_target_properties(leveldb
+        PROPERTIES
+        CUDA_SEPARABLE_COMPILATION ON)
 
 target_compile_definitions(leveldb
   PRIVATE
@@ -280,6 +290,21 @@ endif(HAVE_TCMALLOC)
 # Needed by port_stdcxx.h
 find_package(Threads REQUIRED)
 target_link_libraries(leveldb Threads::Threads)
+
+# GPU stuff
+#target_link_libraries(compactOnGPUTest leveldb)
+find_package(CUDAToolkit)
+add_library(cudaWorker SHARED "util/compactionOnGPU.cu" "util/compactionOnGPU.cuh")
+target_include_directories(cudaWorker PUBLIC ${CUDAToolkit_INCLUDE_DIRS})
+set_target_properties(
+        cudaWorker
+        PROPERTIES
+        CUDA_SEPARABLE_COMPILATION ON)
+target_link_libraries(leveldb cudaWorker)
+target_link_libraries(cudaWorker CUDA::cudart)
+#add_executable(compactOnGPUTest
+#        util/compactGPUTest.cu
+#)
 
 add_executable(leveldbutil
   "db/leveldbutil.cc"
@@ -445,7 +470,7 @@ int main() {
 endif(LEVELDB_BUILD_BENCHMARKS)
 
 if(LEVELDB_INSTALL)
-  install(TARGETS leveldb
+  install(TARGETS leveldb cudaWorker
     EXPORT leveldbTargets
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

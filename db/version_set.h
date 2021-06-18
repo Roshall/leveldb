@@ -269,6 +269,8 @@ class VersionSet {
   };
   const char* LevelSummary(LevelSummaryStorage* scratch) const;
 
+  bool Prepare4GPU(Compaction* c, SequenceNumber smallest_snapshot);
+
  private:
   class Builder;
 

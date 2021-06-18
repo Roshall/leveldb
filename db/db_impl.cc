@@ -906,7 +906,10 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
   } else {
     compact->smallest_snapshot = snapshots_.oldest()->sequence_number();
   }
-
+#define USE_GPU
+#ifdef USE_GPU
+  versions_->Prepare4GPU(compact->compaction, compact->smallest_snapshot);
+#endif
   Iterator* input = versions_->MakeInputIterator(compact->compaction);
 
   // Release mutex while we're actually doing the compaction work
