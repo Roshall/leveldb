@@ -4,23 +4,22 @@
 
 #include "db/version_set.h"
 
-#include <algorithm>
-#include <cstdio>
-
 #include "db/filename.h"
 #include "db/log_reader.h"
 #include "db/log_writer.h"
 #include "db/memtable.h"
 #include "db/table_cache.h"
+#include <algorithm>
+#include <cstdio>
+
 #include "leveldb/env.h"
 #include "leveldb/table_builder.h"
+
 #include "table/merger.h"
 #include "table/two_level_iterator.h"
+#include "util/GPUWorker/compactionOnGPU.cuh"
 #include "util/coding.h"
 #include "util/logging.h"
-#include "util/compactionOnGPU.cuh"
-
-
 
 namespace leveldb {
 
@@ -1505,7 +1504,7 @@ bool VersionSet::Prepare4GPU(Compaction* c, SequenceNumber smallest_snapshot) {
   }
 //  char* data = new char[level_offset[2]];
   char* data ;
-  compator->unifiedAlloc(reinterpret_cast<void**>(&data), sizeof(char)*level_offset[2]);
+  compator->unifiedAlloc(reinterpret_cast<void**>(&data), sizeof(char)*table_offset[number]);
   number = 0;
 
   for (auto & input : c->inputs_) {

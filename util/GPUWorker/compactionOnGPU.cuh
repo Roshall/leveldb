@@ -11,23 +11,13 @@
 //#include <leveldb/options.h>
 #include <iostream>
 
-
-typedef  unsigned int u_offset;
+using u_offset = uint32_t;
 
 namespace gpu {
-#define checkCudaErrors(val) check((val), #val, __FILE__, __LINE__)
-template <typename T>
-void check(T err, const char* const func, const char* const file,
-           const int line) {
-  if (err != cudaSuccess) {
-    std::cerr << "CUDA error at: " << file << ":" << line << std::endl;
-    std::cerr << cudaGetErrorString(err) << " " << func << std::endl;
-    exit(1);
-  }
-}
 
 class GPUCompactor {
  public:
+
   GPUCompactor()= default;
   GPUCompactor(const char* inputData, const u_offset* inputLevelOffset,
                const u_offset* inputTableOffset, const int inputNum)
@@ -36,15 +26,7 @@ class GPUCompactor {
         input_table_offset_(inputTableOffset),
         input_table_num_(inputNum) {}
 
-  virtual ~GPUCompactor() {
-    checkCudaErrors(cudaFree(output_data_));
-    checkCudaErrors(cudaFree((void*)input_level_offset_));
-    checkCudaErrors(cudaFree((void*)input_table_offset_));
-
-    //    delete[] output_data_;
-//    delete[] input_level_offset_;
-//    delete[] input_table_offset_;
-  }
+  virtual ~GPUCompactor();
   void DoCompaction();
   void setHasLevel0(bool hasLevel0) { has_level0 = hasLevel0; }
   void unifiedAlloc(void** pointer,size_t size);
@@ -67,6 +49,16 @@ class GPUCompactor {
 //  const leveldb::SequenceNumber smallest_snapshot_;
   // I need (int)block_restart_interval
 //  const leveldb::Options* option_;
+
+  // for unpacking table we need 5+ step:
+  // 1. reach index block get maximum blocks num array
+  // 2. read index block get block offset
+  // 3. reach data block get maximum record num array
+  // 4. read data block to obtain each key size and value offset
+  // 5. read data block again for finally reading key
+  void unpackTable();
+  void compackTable();
+  void packTable();
 };
 }
 

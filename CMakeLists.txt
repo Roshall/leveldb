@@ -2,11 +2,13 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.17)
 # Keep the version below in sync with the one in db.h
 if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
   set(CMAKE_CUDA_ARCHITECTURES 61)
 endif()
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 #set(CUDA_RUNTIME_LIBRARY Shared)
 
 #project(leveldb VERSION 1.23.0 LANGUAGES C CXX)
@@ -294,14 +296,22 @@ target_link_libraries(leveldb Threads::Threads)
 # GPU stuff
 #target_link_libraries(compactOnGPUTest leveldb)
 find_package(CUDAToolkit)
-add_library(cudaWorker SHARED "util/compactionOnGPU.cu" "util/compactionOnGPU.cuh")
-target_include_directories(cudaWorker PUBLIC ${CUDAToolkit_INCLUDE_DIRS})
+# find CUB
+find_package(CUB REQUIRED)
+add_library(cudaWorker SHARED "util/GPUWorker/compactionOnGPU.cu" "util/GPUWorker/compactionOnGPU.cuh")
+target_include_directories(cudaWorker
+        PRIVATE ${CUDAToolkit_INCLUDE_DIRS} ${CUB_INCLUDE_DIRS})
 set_target_properties(
         cudaWorker
         PROPERTIES
         CUDA_SEPARABLE_COMPILATION ON)
+set_target_properties(
+        cudaWorker
+        PROPERTIES
+        CUDA_ARCHITECTURES 61
+)
 target_link_libraries(leveldb cudaWorker)
-target_link_libraries(cudaWorker CUDA::cudart)
+target_link_libraries(cudaWorker PRIVATE CUDA::cudart)
 #add_executable(compactOnGPUTest
 #        util/compactGPUTest.cu
 #)
