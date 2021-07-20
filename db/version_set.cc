@@ -1485,19 +1485,18 @@ bool VersionSet::Prepare4GPU(Compaction* c, SequenceNumber smallest_snapshot) {
   // put all the sstable together
   int number = c->inputs_[0].size() + c->inputs_[1].size();
   auto *compator = new gpu::GPUCompactor();
-  u_offset *table_offset;
-  compator->unifiedAlloc(reinterpret_cast<void**>(&table_offset), sizeof(u_offset)*(number+1));
-//  auto table_offset = new u_offset[number+1];
-  u_offset *level_offset;
-  compator->unifiedAlloc(reinterpret_cast<void**>(&level_offset), sizeof(u_offset)*(3));
-//  auto level_offset = new u_offset[3];
+  addr_t *table_offset;
+  compator->unifiedAlloc(reinterpret_cast<void**>(&table_offset), sizeof(addr_t)*(number+1));
+//  auto table_offset = new offset_t[number+1];
+  offset_t*level_offset;
+  compator->unifiedAlloc(reinterpret_cast<void**>(&level_offset), sizeof(offset_t)*(3));
+//  auto level_offset = new offset_t[3];
   table_offset[0] = 0;
   level_offset[0] = 0;
   number = 1;
   for (int which = 0; which < 2; ++which) {
     for (auto & file : c->inputs_[which]) {
-      table_offset[number] = static_cast<int>(file->file_size)
-                             + table_offset[number - 1];
+      table_offset[number] = file->file_size + table_offset[number - 1];
       ++number;
     }
     level_offset[which+1] = table_offset[number-1];
@@ -1541,9 +1540,9 @@ bool VersionSet::Prepare4GPU(Compaction* c, SequenceNumber smallest_snapshot) {
       }
 //      auto *cmptor = new gpu::GPUCompactor(data, level_offset, table_offset,
 //                                      number);
-      compator->setInputData(data);
-      compator->setInputTableOffset(table_offset);
-      compator->setInputLevelOffset(level_offset);
+      compator->input_data_ = data;
+      compator->input_table_offset_ = table_offset;
+      compator->input_level_offset_ = level_offset;
       compator->setHasLevel0(c->level() == 0);
       compator->DoCompaction();
 
