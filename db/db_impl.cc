@@ -56,6 +56,7 @@ struct DBImpl::CompactionState {
   struct Output {
     uint64_t number;
     uint64_t file_size;
+    Scores scores;
     InternalKey smallest, largest;
   };
 
@@ -536,7 +537,7 @@ Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
       level = base->PickLevelForMemTableOutput(min_user_key, max_user_key);
     }
     edit->AddFile(level, meta.number, meta.file_size, meta.smallest,
-                  meta.largest);
+                  meta.largest, meta.scores);
   }
 
   CompactionStats stats;
@@ -735,7 +736,7 @@ void DBImpl::BackgroundCompaction() {
     FileMetaData* f = c->input(0, 0);
     c->edit()->RemoveFile(c->level(), f->number);
     c->edit()->AddFile(c->level() + 1, f->number, f->file_size, f->smallest,
-                       f->largest);
+                       f->largest, f->scores);
     status = versions_->LogAndApply(c->edit(), &mutex_);
     if (!status.ok()) {
       RecordBackgroundError(status);
@@ -884,7 +885,7 @@ Status DBImpl::InstallCompactionResults(CompactionState* compact) {
   for (size_t i = 0; i < compact->outputs.size(); i++) {
     const CompactionState::Output& out = compact->outputs[i];
     compact->compaction->edit()->AddFile(level + 1, out.number, out.file_size,
-                                         out.smallest, out.largest);
+                                         out.smallest, out.largest, out.scores);
   }
   return versions_->LogAndApply(compact->compaction->edit(), &mutex_);
 }
@@ -918,6 +919,7 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
   std::string current_user_key;
   bool has_current_user_key = false;
   SequenceNumber last_sequence_for_key = kMaxSequenceNumber;
+  Scores scores{};
   while (input->Valid() && !shutting_down_.load(std::memory_order_acquire)) {
     // Prioritize immutable compaction work
     if (has_imm_.load(std::memory_order_relaxed)) {
@@ -935,6 +937,7 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
     Slice key = input->key();
     if (compact->compaction->ShouldStopBefore(key) &&
         compact->builder != nullptr) {
+      compact->current_output()->scores = scores;
       status = FinishCompactionOutputFile(compact, input);
       if (!status.ok()) {
         break;
@@ -990,6 +993,7 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
       // Open output file if necessary
       if (compact->builder == nullptr) {
         status = OpenCompactionOutputFile(compact);
+        scores.clear();
         if (!status.ok()) {
           break;
         }
@@ -998,11 +1002,17 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
         compact->current_output()->smallest.DecodeFrom(key);
       }
       compact->current_output()->largest.DecodeFrom(key);
-      compact->builder->Add(key, input->value());
+      auto value = input->value();
+      auto score_raw = static_cast<uint8_t>(value[0]);
+      scores.write +=  score_raw & 0x7;
+      scores.read += score_raw >> 3;
+      value.remove_prefix(1);
+      compact->builder->Add(key, value);
 
       // Close output file if it is big enough
       if (compact->builder->FileSize() >=
           compact->compaction->MaxOutputFileSize()) {
+        compact->current_output()->scores = scores;
         status = FinishCompactionOutputFile(compact, input);
         if (!status.ok()) {
           break;
@@ -1017,6 +1027,7 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
     status = Status::IOError("Deleting DB during compaction");
   }
   if (status.ok() && compact->builder != nullptr) {
+    compact->current_output()->scores = scores;
     status = FinishCompactionOutputFile(compact, input);
   }
   if (status.ok()) {

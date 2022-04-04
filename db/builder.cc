@@ -31,9 +31,16 @@ Status BuildTable(const std::string& dbname, Env* env, const Options& options,
     TableBuilder* builder = new TableBuilder(options, file);
     meta->smallest.DecodeFrom(iter->key());
     Slice key;
+    Slice value;
+    Scores scores{};
     for (; iter->Valid(); iter->Next()) {
       key = iter->key();
-      builder->Add(key, iter->value());
+      value = iter->value();
+      auto score_raw = static_cast<uint8_t>(value[0]);
+      scores.write += score_raw & 0x7;
+      scores.read += score_raw >> 3;
+      value.remove_prefix(1);
+      builder->Add(key, value);
     }
     if (!key.empty()) {
       meta->largest.DecodeFrom(key);
@@ -43,6 +50,7 @@ Status BuildTable(const std::string& dbname, Env* env, const Options& options,
     s = builder->Finish();
     if (s.ok()) {
       meta->file_size = builder->FileSize();
+      meta->scores = scores;
       assert(meta->file_size > 0);
     }
     delete builder;
