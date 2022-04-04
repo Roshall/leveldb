@@ -1264,18 +1264,28 @@ Compaction* VersionSet::PickCompaction() {
     c = new Compaction(options_, level);
 
     // Pick the first file that comes after compact_pointer_[level]
-    for (size_t i = 0; i < current_->files_[level].size(); i++) {
-      FileMetaData* f = current_->files_[level][i];
-      if (compact_pointer_[level].empty() ||
-          icmp_.Compare(f->largest.Encode(), compact_pointer_[level]) > 0) {
-        c->inputs_[0].push_back(f);
-        break;
-      }
-    }
-    if (c->inputs_[0].empty()) {
-      // Wrap-around to the beginning of the key space
-      c->inputs_[0].push_back(current_->files_[level][0]);
-    }
+//    for (size_t i = 0; i < current_->files_[level].size(); i++) {
+//      FileMetaData* f = current_->files_[level][i];
+//      if (compact_pointer_[level].empty() ||
+//          icmp_.Compare(f->largest.Encode(), compact_pointer_[level]) > 0) {
+//        c->inputs_[0].push_back(f);
+//        break;
+//      }
+//    }
+//    if (c->inputs_[0].empty()) {
+//      // Wrap-around to the beginning of the key space
+//      c->inputs_[0].push_back(current_->files_[level][0]);
+//    }
+
+    // Pick the coldest file
+    // TODO(lu-guang): store the list in VersionSet?
+    auto iter = std::min_element(current_->files_[level].cbegin(),
+                                 current_->files_[level].cend(),
+                                 [](auto lhs, auto rhs) {
+                                   return lhs->scores.write < rhs->scores.write;
+                                 });
+    c->inputs_[0].push_back(*iter);
+
   } else if (seek_compaction) {
     level = current_->file_to_compact_level_;
     c = new Compaction(options_, level);
