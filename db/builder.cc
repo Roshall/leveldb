@@ -36,9 +36,12 @@ Status BuildTable(const std::string& dbname, Env* env, const Options& options,
     for (; iter->Valid(); iter->Next()) {
       key = iter->key();
       value = iter->value();
-      auto score_raw = static_cast<uint8_t>(value[value.size()-1]);
-      scores.write += score_raw & 0x7;
-      scores.read += score_raw >> 3;
+      // TODO(lu-guang): Maybe we should consider average score
+      if (value.empty()) {// a non-deleted key, update scores
+        auto score_raw = static_cast<uint8_t>(value[value.size()-1]);
+        scores.write += score_raw & 0x7;
+        scores.read += score_raw >> 3;
+      }
       builder->Add(key, value);
     }
     if (!key.empty()) {
