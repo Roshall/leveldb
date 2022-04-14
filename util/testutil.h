@@ -8,11 +8,11 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "helpers/memenv/memenv.h"
-#include "leveldb/env.h"
-#include "leveldb/slice.h"
+#include "leveldb_hot/env.h"
+#include "leveldb_hot/slice.h"
 #include "util/random.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 namespace test {
 
 MATCHER(IsOK, "") { return arg.ok(); }
@@ -20,9 +20,9 @@ MATCHER(IsOK, "") { return arg.ok(); }
 // Macros for testing the results of functions that return leveldb::Status or
 // absl::StatusOr<T> (for any type T).
 #define EXPECT_LEVELDB_OK(expression) \
-  EXPECT_THAT(expression, leveldb::test::IsOK())
+  EXPECT_THAT(expression, leveldb_hot::test::IsOK())
 #define ASSERT_LEVELDB_OK(expression) \
-  ASSERT_THAT(expression, leveldb::test::IsOK())
+  ASSERT_THAT(expression, leveldb_hot::test::IsOK())
 
 // Returns the random seed used at the start of the current test run.
 inline int RandomSeed() {
@@ -77,6 +77,6 @@ class ErrorEnv : public EnvWrapper {
 };
 
 }  // namespace test
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_UTIL_TESTUTIL_H_

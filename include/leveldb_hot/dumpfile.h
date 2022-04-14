@@ -2,16 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#ifndef STORAGE_LEVELDB_INCLUDE_DUMPFILE_H_
-#define STORAGE_LEVELDB_INCLUDE_DUMPFILE_H_
+#ifndef STORAGE_LEVELDB_HOT_INCLUDE_DUMPFILE_H_
+#define STORAGE_LEVELDB_HOT_INCLUDE_DUMPFILE_H_
 
 #include <string>
 
-#include "leveldb/env.h"
-#include "leveldb/export.h"
-#include "leveldb/status.h"
+#include "leveldb_hot/env.h"
+#include "leveldb_hot/export.h"
+#include "leveldb_hot/status.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 // Dump the contents of the file named by fname in text format to
 // *dst.  Makes a sequence of dst->Append() calls; each call is passed
@@ -23,6 +23,6 @@ namespace leveldb {
 LEVELDB_EXPORT Status DumpFile(Env* env, const std::string& fname,
                                WritableFile* dst);
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
-#endif  // STORAGE_LEVELDB_INCLUDE_DUMPFILE_H_
+#endif  // STORAGE_LEVELDB_HOT_INCLUDE_DUMPFILE_H_

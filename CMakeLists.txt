@@ -95,7 +95,7 @@ check_cxx_source_compiles("
 int main() { std::string str; return 0; }
 " HAVE_CXX17_HAS_INCLUDE)
 
-set(LEVELDB_PUBLIC_INCLUDE_DIR "include/leveldb")
+set(LEVELDB_PUBLIC_INCLUDE_DIR "include/leveldb_hot")
 set(LEVELDB_PORT_CONFIG_DIR "include/port")
 
 configure_file(

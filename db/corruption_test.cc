@@ -9,14 +9,14 @@
 #include "db/filename.h"
 #include "db/log_format.h"
 #include "db/version_set.h"
-#include "leveldb/cache.h"
-#include "leveldb/db.h"
-#include "leveldb/table.h"
-#include "leveldb/write_batch.h"
+#include "leveldb_hot/cache.h"
+#include "leveldb_hot/db.h"
+#include "leveldb_hot/table.h"
+#include "leveldb_hot/write_batch.h"
 #include "util/logging.h"
 #include "util/testutil.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 static const int kValueSize = 1000;
 
@@ -51,7 +51,7 @@ class CorruptionTest : public testing::Test {
   void RepairDB() {
     delete db_;
     db_ = nullptr;
-    ASSERT_LEVELDB_OK(::leveldb::RepairDB(dbname_, options_));
+    ASSERT_LEVELDB_OK(::leveldb_hot::RepairDB(dbname_, options_));
   }
 
   void Build(int n) {
@@ -359,4 +359,4 @@ TEST_F(CorruptionTest, UnrelatedKeys) {
   ASSERT_EQ(Value(1000, &tmp2).ToString(), v);
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

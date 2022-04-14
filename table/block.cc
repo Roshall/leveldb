@@ -10,12 +10,12 @@
 #include <cstdint>
 #include <vector>
 
-#include "leveldb/comparator.h"
+#include "leveldb_hot/comparator.h"
 #include "table/format.h"
 #include "util/coding.h"
 #include "util/logging.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 inline uint32_t Block::NumRestarts() const {
   assert(size_ >= sizeof(uint32_t));
@@ -289,4 +289,4 @@ Iterator* Block::NewIterator(const Comparator* comparator) {
   }
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

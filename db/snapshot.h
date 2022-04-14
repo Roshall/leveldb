@@ -6,9 +6,9 @@
 #define STORAGE_LEVELDB_DB_SNAPSHOT_H_
 
 #include "db/dbformat.h"
-#include "leveldb/db.h"
+#include "leveldb_hot/db.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class SnapshotList;
 
@@ -90,6 +90,6 @@ class SnapshotList {
   SnapshotImpl head_;
 };
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_DB_SNAPSHOT_H_

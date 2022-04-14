@@ -10,16 +10,16 @@
 // non-const method, all threads accessing the same Status must use
 // external synchronization.
 
-#ifndef STORAGE_LEVELDB_INCLUDE_STATUS_H_
-#define STORAGE_LEVELDB_INCLUDE_STATUS_H_
+#ifndef STORAGE_LEVELDB_HOT_INCLUDE_STATUS_H_
+#define STORAGE_LEVELDB_HOT_INCLUDE_STATUS_H_
 
 #include <algorithm>
 #include <string>
 
-#include "leveldb/export.h"
-#include "leveldb/slice.h"
+#include "leveldb_hot/export.h"
+#include "leveldb_hot/slice.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class LEVELDB_EXPORT Status {
  public:
@@ -117,6 +117,6 @@ inline Status& Status::operator=(Status&& rhs) noexcept {
   return *this;
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
-#endif  // STORAGE_LEVELDB_INCLUDE_STATUS_H_
+#endif  // STORAGE_LEVELDB_HOT_INCLUDE_STATUS_H_

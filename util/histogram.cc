@@ -9,7 +9,7 @@
 
 #include "port/port.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 const double Histogram::kBucketLimit[kNumBuckets] = {
     1,
@@ -269,4 +269,4 @@ std::string Histogram::ToString() const {
   return r;
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

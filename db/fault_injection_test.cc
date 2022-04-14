@@ -14,18 +14,18 @@
 #include "db/filename.h"
 #include "db/log_format.h"
 #include "db/version_set.h"
-#include "leveldb/cache.h"
-#include "leveldb/db.h"
-#include "leveldb/env.h"
-#include "leveldb/table.h"
-#include "leveldb/write_batch.h"
+#include "leveldb_hot/cache.h"
+#include "leveldb_hot/db.h"
+#include "leveldb_hot/env.h"
+#include "leveldb_hot/table.h"
+#include "leveldb_hot/write_batch.h"
 #include "port/port.h"
 #include "port/thread_annotations.h"
 #include "util/logging.h"
 #include "util/mutexlock.h"
 #include "util/testutil.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 static const int kValueSize = 1000;
 static const int kMaxNumValues = 2000;
@@ -52,14 +52,14 @@ Status SyncDir(const std::string& dir) {
 
 // A basic file truncation function suitable for this test.
 Status Truncate(const std::string& filename, uint64_t length) {
-  leveldb::Env* env = leveldb::Env::Default();
+  leveldb_hot::Env* env = leveldb_hot::Env::Default();
 
   SequentialFile* orig_file;
   Status s = env->NewSequentialFile(filename, &orig_file);
   if (!s.ok()) return s;
 
   char* scratch = new char[length];
-  leveldb::Slice result;
+  leveldb_hot::Slice result;
   s = orig_file->Read(length, &result, scratch);
   delete orig_file;
   if (s.ok()) {
@@ -547,4 +547,4 @@ TEST_F(FaultInjectionTest, FaultTestWithLogReuse) {
   DoTest();
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

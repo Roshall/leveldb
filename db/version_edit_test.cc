@@ -6,7 +6,7 @@
 
 #include "gtest/gtest.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 static void TestEncodeDecode(const VersionEdit& edit) {
   std::string encoded, encoded2;
@@ -39,4 +39,4 @@ TEST(VersionEditTest, EncodeDecode) {
   TestEncodeDecode(edit);
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

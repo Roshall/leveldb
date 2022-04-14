@@ -13,14 +13,14 @@
 // Most people will want to use the builtin bloom filter support (see
 // NewBloomFilterPolicy() below).
 
-#ifndef STORAGE_LEVELDB_INCLUDE_FILTER_POLICY_H_
-#define STORAGE_LEVELDB_INCLUDE_FILTER_POLICY_H_
+#ifndef STORAGE_LEVELDB_HOT_INCLUDE_FILTER_POLICY_H_
+#define STORAGE_LEVELDB_HOT_INCLUDE_FILTER_POLICY_H_
 
 #include <string>
 
-#include "leveldb/export.h"
+#include "leveldb_hot/export.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class Slice;
 
@@ -67,6 +67,6 @@ class LEVELDB_EXPORT FilterPolicy {
 // trailing spaces in keys.
 LEVELDB_EXPORT const FilterPolicy* NewBloomFilterPolicy(int bits_per_key);
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
-#endif  // STORAGE_LEVELDB_INCLUDE_FILTER_POLICY_H_
+#endif  // STORAGE_LEVELDB_HOT_INCLUDE_FILTER_POLICY_H_

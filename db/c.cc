@@ -2,47 +2,47 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include "leveldb/c.h"
+#include "leveldb_hot/c.h"
 
 #include <string.h>
 
 #include <cstdint>
 #include <cstdlib>
 
-#include "leveldb/cache.h"
-#include "leveldb/comparator.h"
-#include "leveldb/db.h"
-#include "leveldb/env.h"
-#include "leveldb/filter_policy.h"
-#include "leveldb/iterator.h"
-#include "leveldb/options.h"
-#include "leveldb/status.h"
-#include "leveldb/write_batch.h"
+#include "leveldb_hot/cache.h"
+#include "leveldb_hot/comparator.h"
+#include "leveldb_hot/db.h"
+#include "leveldb_hot/env.h"
+#include "leveldb_hot/filter_policy.h"
+#include "leveldb_hot/iterator.h"
+#include "leveldb_hot/options.h"
+#include "leveldb_hot/status.h"
+#include "leveldb_hot/write_batch.h"
 
-using leveldb::Cache;
-using leveldb::Comparator;
-using leveldb::CompressionType;
-using leveldb::DB;
-using leveldb::Env;
-using leveldb::FileLock;
-using leveldb::FilterPolicy;
-using leveldb::Iterator;
-using leveldb::kMajorVersion;
-using leveldb::kMinorVersion;
-using leveldb::Logger;
-using leveldb::NewBloomFilterPolicy;
-using leveldb::NewLRUCache;
-using leveldb::Options;
-using leveldb::RandomAccessFile;
-using leveldb::Range;
-using leveldb::ReadOptions;
-using leveldb::SequentialFile;
-using leveldb::Slice;
-using leveldb::Snapshot;
-using leveldb::Status;
-using leveldb::WritableFile;
-using leveldb::WriteBatch;
-using leveldb::WriteOptions;
+using leveldb_hot::Cache;
+using leveldb_hot::Comparator;
+using leveldb_hot::CompressionType;
+using leveldb_hot::DB;
+using leveldb_hot::Env;
+using leveldb_hot::FileLock;
+using leveldb_hot::FilterPolicy;
+using leveldb_hot::Iterator;
+using leveldb_hot::kMajorVersion;
+using leveldb_hot::kMinorVersion;
+using leveldb_hot::Logger;
+using leveldb_hot::NewBloomFilterPolicy;
+using leveldb_hot::NewLRUCache;
+using leveldb_hot::Options;
+using leveldb_hot::RandomAccessFile;
+using leveldb_hot::Range;
+using leveldb_hot::ReadOptions;
+using leveldb_hot::SequentialFile;
+using leveldb_hot::Slice;
+using leveldb_hot::Snapshot;
+using leveldb_hot::Status;
+using leveldb_hot::WritableFile;
+using leveldb_hot::WriteBatch;
+using leveldb_hot::WriteOptions;
 
 extern "C" {
 

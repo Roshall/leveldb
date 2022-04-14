@@ -8,9 +8,9 @@
 #include <cstdint>
 
 #include "db/dbformat.h"
-#include "leveldb/db.h"
+#include "leveldb_hot/db.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class DBImpl;
 
@@ -21,6 +21,6 @@ Iterator* NewDBIterator(DBImpl* db, const Comparator* user_key_comparator,
                         Iterator* internal_iter, SequenceNumber sequence,
                         uint32_t seed);
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_DB_DB_ITER_H_

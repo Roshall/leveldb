@@ -18,15 +18,15 @@
 // non-const method, all threads accessing the same WriteBatch must use
 // external synchronization.
 
-#ifndef STORAGE_LEVELDB_INCLUDE_WRITE_BATCH_H_
-#define STORAGE_LEVELDB_INCLUDE_WRITE_BATCH_H_
+#ifndef STORAGE_LEVELDB_HOT_INCLUDE_WRITE_BATCH_H_
+#define STORAGE_LEVELDB_HOT_INCLUDE_WRITE_BATCH_H_
 
 #include <string>
 
-#include "leveldb/export.h"
-#include "leveldb/status.h"
+#include "leveldb_hot/export.h"
+#include "leveldb_hot/status.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class Slice;
 
@@ -78,6 +78,6 @@ class LEVELDB_EXPORT WriteBatch {
   std::string rep_;  // See comment in write_batch.cc for the format of rep_
 };
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
-#endif  // STORAGE_LEVELDB_INCLUDE_WRITE_BATCH_H_
+#endif  // STORAGE_LEVELDB_HOT_INCLUDE_WRITE_BATCH_H_

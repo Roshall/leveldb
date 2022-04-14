@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include "leveldb/db.h"
+#include "leveldb_hot/db.h"
 
 #include <atomic>
 #include <cinttypes>
@@ -13,10 +13,10 @@
 #include "db/filename.h"
 #include "db/version_set.h"
 #include "db/write_batch_internal.h"
-#include "leveldb/cache.h"
-#include "leveldb/env.h"
-#include "leveldb/filter_policy.h"
-#include "leveldb/table.h"
+#include "leveldb_hot/cache.h"
+#include "leveldb_hot/env.h"
+#include "leveldb_hot/filter_policy.h"
+#include "leveldb_hot/table.h"
 #include "port/port.h"
 #include "port/thread_annotations.h"
 #include "util/hash.h"
@@ -24,7 +24,7 @@
 #include "util/mutexlock.h"
 #include "util/testutil.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 static std::string RandomString(Random* rnd, int len) {
   std::string r;
@@ -2294,4 +2294,4 @@ TEST_F(DBTest, Randomized) {
   } while (ChangeOptions());
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

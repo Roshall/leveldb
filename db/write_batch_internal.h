@@ -6,9 +6,9 @@
 #define STORAGE_LEVELDB_DB_WRITE_BATCH_INTERNAL_H_
 
 #include "db/dbformat.h"
-#include "leveldb/write_batch.h"
+#include "leveldb_hot/write_batch.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class MemTable;
 
@@ -40,6 +40,6 @@ class WriteBatchInternal {
   static void Append(WriteBatch* dst, const WriteBatch* src);
 };
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_DB_WRITE_BATCH_INTERNAL_H_

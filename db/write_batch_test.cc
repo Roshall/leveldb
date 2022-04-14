@@ -5,11 +5,11 @@
 #include "gtest/gtest.h"
 #include "db/memtable.h"
 #include "db/write_batch_internal.h"
-#include "leveldb/db.h"
-#include "leveldb/env.h"
+#include "leveldb_hot/db.h"
+#include "leveldb_hot/env.h"
 #include "util/logging.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 static std::string PrintContents(WriteBatch* b) {
   InternalKeyComparator cmp(BytewiseComparator());
@@ -129,4 +129,4 @@ TEST(WriteBatchTest, ApproximateSize) {
   ASSERT_LT(two_keys_size, post_delete_size);
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

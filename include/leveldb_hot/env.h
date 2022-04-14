@@ -10,16 +10,16 @@
 // All Env implementations are safe for concurrent access from
 // multiple threads without any external synchronization.
 
-#ifndef STORAGE_LEVELDB_INCLUDE_ENV_H_
-#define STORAGE_LEVELDB_INCLUDE_ENV_H_
+#ifndef STORAGE_LEVELDB_HOT_INCLUDE_ENV_H_
+#define STORAGE_LEVELDB_HOT_INCLUDE_ENV_H_
 
 #include <cstdarg>
 #include <cstdint>
 #include <string>
 #include <vector>
 
-#include "leveldb/export.h"
-#include "leveldb/status.h"
+#include "leveldb_hot/export.h"
+#include "leveldb_hot/status.h"
 
 // This workaround can be removed when leveldb::Env::DeleteFile is removed.
 #if defined(_WIN32)
@@ -39,7 +39,7 @@
 #endif  // defined(DeleteFile)
 #endif  // defined(_WIN32)
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class FileLock;
 class Logger;
@@ -402,7 +402,7 @@ class LEVELDB_EXPORT EnvWrapper : public Env {
   Env* target_;
 };
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 // This workaround can be removed when leveldb::Env::DeleteFile is removed.
 // Redefine DeleteFile if it was undefined earlier.
@@ -414,4 +414,4 @@ class LEVELDB_EXPORT EnvWrapper : public Env {
 #endif  // defined(UNICODE)
 #endif  // defined(_WIN32) && defined(LEVELDB_DELETEFILE_UNDEFINED)
 
-#endif  // STORAGE_LEVELDB_INCLUDE_ENV_H_
+#endif  // STORAGE_LEVELDB_HOT_INCLUDE_ENV_H_

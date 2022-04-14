@@ -12,14 +12,14 @@
 // non-const method, all threads accessing the same Iterator must use
 // external synchronization.
 
-#ifndef STORAGE_LEVELDB_INCLUDE_ITERATOR_H_
-#define STORAGE_LEVELDB_INCLUDE_ITERATOR_H_
+#ifndef STORAGE_LEVELDB_HOT_INCLUDE_ITERATOR_H_
+#define STORAGE_LEVELDB_HOT_INCLUDE_ITERATOR_H_
 
-#include "leveldb/export.h"
-#include "leveldb/slice.h"
-#include "leveldb/status.h"
+#include "leveldb_hot/export.h"
+#include "leveldb_hot/slice.h"
+#include "leveldb_hot/status.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class LEVELDB_EXPORT Iterator {
  public:
@@ -107,6 +107,6 @@ LEVELDB_EXPORT Iterator* NewEmptyIterator();
 // Return an empty iterator with the specified status.
 LEVELDB_EXPORT Iterator* NewErrorIterator(const Status& status);
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
-#endif  // STORAGE_LEVELDB_INCLUDE_ITERATOR_H_
+#endif  // STORAGE_LEVELDB_HOT_INCLUDE_ITERATOR_H_

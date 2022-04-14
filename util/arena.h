@@ -11,7 +11,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class Arena {
  public:
@@ -66,6 +66,6 @@ inline char* Arena::Allocate(size_t bytes) {
   return AllocateFallback(bytes);
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_UTIL_ARENA_H_

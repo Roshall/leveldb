@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include "leveldb/iterator.h"
+#include "leveldb_hot/iterator.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 Iterator::Iterator() {
   cleanup_head_.function = nullptr;
@@ -73,4 +73,4 @@ Iterator* NewErrorIterator(const Status& status) {
   return new EmptyIterator(status);
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

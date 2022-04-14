@@ -8,10 +8,10 @@
 #include <cstdio>
 
 #include "db/dbformat.h"
-#include "leveldb/env.h"
+#include "leveldb_hot/env.h"
 #include "util/logging.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 // A utility routine: write "data" to the named file and Sync() it.
 Status WriteStringToFileSync(Env* env, const Slice& data,
@@ -138,4 +138,4 @@ Status SetCurrentFile(Env* env, const std::string& dbname,
   return s;
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

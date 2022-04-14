@@ -9,15 +9,15 @@
 #include <cstdint>
 #include <string>
 
-#include "leveldb/comparator.h"
-#include "leveldb/db.h"
-#include "leveldb/filter_policy.h"
-#include "leveldb/slice.h"
-#include "leveldb/table_builder.h"
+#include "leveldb_hot/comparator.h"
+#include "leveldb_hot/db.h"
+#include "leveldb_hot/filter_policy.h"
+#include "leveldb_hot/slice.h"
+#include "leveldb_hot/table_builder.h"
 #include "util/coding.h"
 #include "util/logging.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 // Grouping of constants.  We may want to make some of these
 // parameters set via options.
@@ -219,6 +219,6 @@ inline LookupKey::~LookupKey() {
   if (start_ != space_) delete[] start_;
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_DB_DBFORMAT_H_

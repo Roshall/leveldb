@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include "leveldb/status.h"
+#include "leveldb_hot/status.h"
 
 #include <cstdio>
 
 #include "port/port.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 const char* Status::CopyState(const char* state) {
   uint32_t size;
@@ -74,4 +74,4 @@ std::string Status::ToString() const {
   }
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

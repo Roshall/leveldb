@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include "leveldb/table.h"
+#include "leveldb_hot/table.h"
 
 #include <map>
 #include <string>
@@ -11,17 +11,17 @@
 #include "db/dbformat.h"
 #include "db/memtable.h"
 #include "db/write_batch_internal.h"
-#include "leveldb/db.h"
-#include "leveldb/env.h"
-#include "leveldb/iterator.h"
-#include "leveldb/table_builder.h"
+#include "leveldb_hot/db.h"
+#include "leveldb_hot/env.h"
+#include "leveldb_hot/iterator.h"
+#include "leveldb_hot/table_builder.h"
 #include "table/block.h"
 #include "table/block_builder.h"
 #include "table/format.h"
 #include "util/random.h"
 #include "util/testutil.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 // Return reverse of "key".
 // Used to test non-lexicographic comparators.
@@ -39,7 +39,7 @@ namespace {
 class ReverseKeyComparator : public Comparator {
  public:
   const char* Name() const override {
-    return "leveldb.ReverseBytewiseComparator";
+    return "leveldb_hot.ReverseBytewiseComparator";
   }
 
   int Compare(const Slice& a, const Slice& b) const override {
@@ -826,4 +826,4 @@ TEST(TableTest, ApproximateOffsetOfCompressed) {
   ASSERT_TRUE(Between(c.ApproximateOffsetOf("xyz"), 2 * min_z, 2 * max_z));
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

@@ -3,12 +3,12 @@
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
 #include "gtest/gtest.h"
-#include "leveldb/env.h"
+#include "leveldb_hot/env.h"
 #include "port/port.h"
 #include "util/env_windows_test_helper.h"
 #include "util/testutil.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 static const int kMMapLimit = 4;
 
@@ -39,7 +39,7 @@ TEST_F(EnvWindowsTest, TestOpenOnRead) {
   // leveldb::WindowsEnv to switch from mapping the file into memory
   // to basic file reading.
   const int kNumFiles = kMMapLimit + 5;
-  leveldb::RandomAccessFile* files[kNumFiles] = {0};
+  leveldb_hot::RandomAccessFile* files[kNumFiles] = {0};
   for (int i = 0; i < kNumFiles; i++) {
     ASSERT_LEVELDB_OK(env_->NewRandomAccessFile(test_file, &files[i]));
   }
@@ -55,11 +55,11 @@ TEST_F(EnvWindowsTest, TestOpenOnRead) {
   ASSERT_LEVELDB_OK(env_->RemoveFile(test_file));
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 int main(int argc, char** argv) {
   // All tests currently run with the same read-only file limits.
-  leveldb::EnvWindowsTest::SetFileLimits(leveldb::kMMapLimit);
+  leveldb_hot::EnvWindowsTest::SetFileLimits(leveldb_hot::kMMapLimit);
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

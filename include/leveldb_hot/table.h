@@ -7,10 +7,10 @@
 
 #include <cstdint>
 
-#include "leveldb/export.h"
-#include "leveldb/iterator.h"
+#include "leveldb_hot/export.h"
+#include "leveldb_hot/iterator.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class Block;
 class BlockHandle;
@@ -79,6 +79,6 @@ class LEVELDB_EXPORT Table {
   Rep* const rep_;
 };
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_INCLUDE_TABLE_H_

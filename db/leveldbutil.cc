@@ -4,11 +4,11 @@
 
 #include <cstdio>
 
-#include "leveldb/dumpfile.h"
-#include "leveldb/env.h"
-#include "leveldb/status.h"
+#include "leveldb_hot/dumpfile.h"
+#include "leveldb_hot/env.h"
+#include "leveldb_hot/status.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 namespace {
 
 class StdoutPrinter : public WritableFile {
@@ -36,7 +36,7 @@ bool HandleDumpCommand(Env* env, char** files, int num) {
 }
 
 }  // namespace
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 static void Usage() {
   std::fprintf(
@@ -46,7 +46,7 @@ static void Usage() {
 }
 
 int main(int argc, char** argv) {
-  leveldb::Env* env = leveldb::Env::Default();
+  leveldb_hot::Env* env = leveldb_hot::Env::Default();
   bool ok = true;
   if (argc < 2) {
     Usage();
@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
   } else {
     std::string command = argv[1];
     if (command == "dump") {
-      ok = leveldb::HandleDumpCommand(env, argv + 2, argc - 2);
+      ok = leveldb_hot::HandleDumpCommand(env, argv + 2, argc - 2);
     } else {
       Usage();
       ok = false;

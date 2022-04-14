@@ -8,8 +8,8 @@
 #include <sstream>
 
 #include "gtest/gtest.h"
-#include "leveldb/db.h"
-#include "leveldb/write_batch.h"
+#include "leveldb_hot/db.h"
+#include "leveldb_hot/write_batch.h"
 #include "util/testutil.h"
 
 namespace {
@@ -27,49 +27,49 @@ std::string Key2(int i) { return Key1(i) + "_xxx"; }
 TEST(Issue178, Test) {
   // Get rid of any state from an old run.
   std::string dbpath = testing::TempDir() + "leveldb_cbug_test";
-  DestroyDB(dbpath, leveldb::Options());
+  DestroyDB(dbpath, leveldb_hot::Options());
 
   // Open database.  Disable compression since it affects the creation
   // of layers and the code below is trying to test against a very
   // specific scenario.
-  leveldb::DB* db;
-  leveldb::Options db_options;
+  leveldb_hot::DB* db;
+  leveldb_hot::Options db_options;
   db_options.create_if_missing = true;
-  db_options.compression = leveldb::kNoCompression;
-  ASSERT_LEVELDB_OK(leveldb::DB::Open(db_options, dbpath, &db));
+  db_options.compression = leveldb_hot::kNoCompression;
+  ASSERT_LEVELDB_OK(leveldb_hot::DB::Open(db_options, dbpath, &db));
 
   // create first key range
-  leveldb::WriteBatch batch;
+  leveldb_hot::WriteBatch batch;
   for (size_t i = 0; i < kNumKeys; i++) {
     batch.Put(Key1(i), "value for range 1 key");
   }
-  ASSERT_LEVELDB_OK(db->Write(leveldb::WriteOptions(), &batch));
+  ASSERT_LEVELDB_OK(db->Write(leveldb_hot::WriteOptions(), &batch));
 
   // create second key range
   batch.Clear();
   for (size_t i = 0; i < kNumKeys; i++) {
     batch.Put(Key2(i), "value for range 2 key");
   }
-  ASSERT_LEVELDB_OK(db->Write(leveldb::WriteOptions(), &batch));
+  ASSERT_LEVELDB_OK(db->Write(leveldb_hot::WriteOptions(), &batch));
 
   // delete second key range
   batch.Clear();
   for (size_t i = 0; i < kNumKeys; i++) {
     batch.Delete(Key2(i));
   }
-  ASSERT_LEVELDB_OK(db->Write(leveldb::WriteOptions(), &batch));
+  ASSERT_LEVELDB_OK(db->Write(leveldb_hot::WriteOptions(), &batch));
 
   // compact database
   std::string start_key = Key1(0);
   std::string end_key = Key1(kNumKeys - 1);
-  leveldb::Slice least(start_key.data(), start_key.size());
-  leveldb::Slice greatest(end_key.data(), end_key.size());
+  leveldb_hot::Slice least(start_key.data(), start_key.size());
+  leveldb_hot::Slice greatest(end_key.data(), end_key.size());
 
   // commenting out the line below causes the example to work correctly
   db->CompactRange(&least, &greatest);
 
   // count the keys
-  leveldb::Iterator* iter = db->NewIterator(leveldb::ReadOptions());
+  leveldb_hot::Iterator* iter = db->NewIterator(leveldb_hot::ReadOptions());
   size_t num_keys = 0;
   for (iter->SeekToFirst(); iter->Valid(); iter->Next()) {
     num_keys++;
@@ -79,7 +79,7 @@ TEST(Issue178, Test) {
 
   // close database
   delete db;
-  DestroyDB(dbpath, leveldb::Options());
+  DestroyDB(dbpath, leveldb_hot::Options());
 }
 
 }  // anonymous namespace

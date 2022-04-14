@@ -6,11 +6,11 @@
 
 #include <cstdint>
 
-#include "leveldb/env.h"
+#include "leveldb_hot/env.h"
 #include "util/coding.h"
 #include "util/crc32c.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 namespace log {
 
 static void InitTypeCrc(uint32_t* type_crc) {
@@ -108,4 +108,4 @@ Status Writer::EmitPhysicalRecord(RecordType t, const char* ptr,
 }
 
 }  // namespace log
-}  // namespace leveldb
+}  // namespace leveldb_hot

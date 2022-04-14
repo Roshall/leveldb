@@ -7,7 +7,7 @@
 #include "gtest/gtest.h"
 #include "util/random.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 TEST(ArenaTest, Empty) { Arena arena; }
 
@@ -58,4 +58,4 @@ TEST(ArenaTest, Simple) {
   }
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

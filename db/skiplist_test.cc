@@ -8,7 +8,7 @@
 #include <set>
 
 #include "gtest/gtest.h"
-#include "leveldb/env.h"
+#include "leveldb_hot/env.h"
 #include "port/port.h"
 #include "port/thread_annotations.h"
 #include "util/arena.h"
@@ -16,7 +16,7 @@
 #include "util/random.h"
 #include "util/testutil.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 typedef uint64_t Key;
 
@@ -365,4 +365,4 @@ TEST(SkipTest, Concurrent3) { RunConcurrent(3); }
 TEST(SkipTest, Concurrent4) { RunConcurrent(4); }
 TEST(SkipTest, Concurrent5) { RunConcurrent(5); }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

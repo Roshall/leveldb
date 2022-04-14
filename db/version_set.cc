@@ -12,14 +12,14 @@
 #include "db/log_writer.h"
 #include "db/memtable.h"
 #include "db/table_cache.h"
-#include "leveldb/env.h"
-#include "leveldb/table_builder.h"
+#include "leveldb_hot/env.h"
+#include "leveldb_hot/table_builder.h"
 #include "table/merger.h"
 #include "table/two_level_iterator.h"
 #include "util/coding.h"
 #include "util/logging.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 static size_t TargetFileSize(const Options* options) {
   return options->max_file_size;
@@ -1576,4 +1576,4 @@ void Compaction::ReleaseInputs() {
   }
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

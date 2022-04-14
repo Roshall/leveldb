@@ -10,7 +10,7 @@
 
 #include "gtest/gtest.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 namespace {
 
@@ -41,4 +41,4 @@ TEST(NoDestructorTest, StaticInstance) {
   ASSERT_EQ(kGoldenB, instance.get()->b);
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

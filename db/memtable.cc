@@ -4,12 +4,12 @@
 
 #include "db/memtable.h"
 #include "db/dbformat.h"
-#include "leveldb/comparator.h"
-#include "leveldb/env.h"
-#include "leveldb/iterator.h"
+#include "leveldb_hot/comparator.h"
+#include "leveldb_hot/env.h"
+#include "leveldb_hot/iterator.h"
 #include "util/coding.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 static Slice GetLengthPrefixedSlice(const char* data) {
   uint32_t len;
@@ -135,4 +135,4 @@ bool MemTable::Get(const LookupKey& key, std::string* value, Status* s) {
   return false;
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

@@ -12,17 +12,17 @@
 // non-const method, all threads accessing the same Slice must use
 // external synchronization.
 
-#ifndef STORAGE_LEVELDB_INCLUDE_SLICE_H_
-#define STORAGE_LEVELDB_INCLUDE_SLICE_H_
+#ifndef STORAGE_LEVELDB_HOT_INCLUDE_SLICE_H_
+#define STORAGE_LEVELDB_HOT_INCLUDE_SLICE_H_
 
 #include <cassert>
 #include <cstddef>
 #include <cstring>
 #include <string>
 
-#include "leveldb/export.h"
+#include "leveldb_hot/export.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class LEVELDB_EXPORT Slice {
  public:
@@ -111,6 +111,6 @@ inline int Slice::compare(const Slice& b) const {
   return r;
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
-#endif  // STORAGE_LEVELDB_INCLUDE_SLICE_H_
+#endif  // STORAGE_LEVELDB_HOT_INCLUDE_SLICE_H_

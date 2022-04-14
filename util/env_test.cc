@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include "leveldb/env.h"
+#include "leveldb_hot/env.h"
 
 #include <algorithm>
 
@@ -12,7 +12,7 @@
 #include "util/mutexlock.h"
 #include "util/testutil.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class EnvTest : public testing::Test {
  public:
@@ -230,4 +230,4 @@ TEST_F(EnvTest, ReopenAppendableFile) {
   env_->RemoveFile(test_file_name);
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

@@ -2,14 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include "leveldb/cache.h"
+#include "leveldb_hot/cache.h"
 
 #include <vector>
 
 #include "gtest/gtest.h"
 #include "util/coding.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 // Conversions between numeric keys/values and the types expected by Cache.
 static std::string EncodeKey(int k) {
@@ -221,4 +221,4 @@ TEST_F(CacheTest, ZeroSizeCache) {
   ASSERT_EQ(-1, Lookup(1));
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

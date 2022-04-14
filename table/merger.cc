@@ -4,11 +4,11 @@
 
 #include "table/merger.h"
 
-#include "leveldb/comparator.h"
-#include "leveldb/iterator.h"
+#include "leveldb_hot/comparator.h"
+#include "leveldb_hot/iterator.h"
 #include "table/iterator_wrapper.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 namespace {
 class MergingIterator : public Iterator {
@@ -188,4 +188,4 @@ Iterator* NewMergingIterator(const Comparator* comparator, Iterator** children,
   }
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

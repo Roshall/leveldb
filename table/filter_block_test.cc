@@ -5,13 +5,13 @@
 #include "table/filter_block.h"
 
 #include "gtest/gtest.h"
-#include "leveldb/filter_policy.h"
+#include "leveldb_hot/filter_policy.h"
 #include "util/coding.h"
 #include "util/hash.h"
 #include "util/logging.h"
 #include "util/testutil.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 // For testing: emit an array with one hash value per key
 class TestHashFilter : public FilterPolicy {
@@ -119,4 +119,4 @@ TEST_F(FilterBlockTest, MultiChunk) {
   ASSERT_TRUE(!reader.KeyMayMatch(9000, "bar"));
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

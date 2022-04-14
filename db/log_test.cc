@@ -5,12 +5,12 @@
 #include "gtest/gtest.h"
 #include "db/log_reader.h"
 #include "db/log_writer.h"
-#include "leveldb/env.h"
+#include "leveldb_hot/env.h"
 #include "util/coding.h"
 #include "util/crc32c.h"
 #include "util/random.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 namespace log {
 
 // Construct a string of the specified length made out of the supplied
@@ -555,4 +555,4 @@ TEST_F(LogTest, ReadEnd) { CheckOffsetPastEndReturnsNoRecords(0); }
 TEST_F(LogTest, ReadPastEnd) { CheckOffsetPastEndReturnsNoRecords(5); }
 
 }  // namespace log
-}  // namespace leveldb
+}  // namespace leveldb_hot

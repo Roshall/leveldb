@@ -6,7 +6,7 @@
 
 #include "gtest/gtest.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 namespace crc32c {
 
 TEST(CRC, StandardResults) {
@@ -53,4 +53,4 @@ TEST(CRC, Mask) {
 }
 
 }  // namespace crc32c
-}  // namespace leveldb
+}  // namespace leveldb_hot

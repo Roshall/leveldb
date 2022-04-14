@@ -9,10 +9,10 @@
 #include <cstdlib>
 #include <limits>
 
-#include "leveldb/env.h"
-#include "leveldb/slice.h"
+#include "leveldb_hot/env.h"
+#include "leveldb_hot/slice.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 void AppendNumberTo(std::string* str, uint64_t num) {
   char buf[30];
@@ -79,4 +79,4 @@ bool ConsumeDecimalNumber(Slice* in, uint64_t* val) {
   return digits_consumed != 0;
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

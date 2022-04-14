@@ -2,14 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include "leveldb/status.h"
+#include "leveldb_hot/status.h"
 
 #include <utility>
 
 #include "gtest/gtest.h"
-#include "leveldb/slice.h"
+#include "leveldb_hot/slice.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 TEST(Status, MoveConstructor) {
   {
@@ -36,4 +36,4 @@ TEST(Status, MoveConstructor) {
   }
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

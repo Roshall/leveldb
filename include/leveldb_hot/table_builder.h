@@ -10,16 +10,16 @@
 // non-const method, all threads accessing the same TableBuilder must use
 // external synchronization.
 
-#ifndef STORAGE_LEVELDB_INCLUDE_TABLE_BUILDER_H_
-#define STORAGE_LEVELDB_INCLUDE_TABLE_BUILDER_H_
+#ifndef STORAGE_LEVELDB_HOT_INCLUDE_TABLE_BUILDER_H_
+#define STORAGE_LEVELDB_HOT_INCLUDE_TABLE_BUILDER_H_
 
 #include <cstdint>
 
-#include "leveldb/export.h"
-#include "leveldb/options.h"
-#include "leveldb/status.h"
+#include "leveldb_hot/export.h"
+#include "leveldb_hot/options.h"
+#include "leveldb_hot/status.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class BlockBuilder;
 class BlockHandle;
@@ -88,6 +88,6 @@ class LEVELDB_EXPORT TableBuilder {
   Rep* rep_;
 };
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
-#endif  // STORAGE_LEVELDB_INCLUDE_TABLE_BUILDER_H_
+#endif  // STORAGE_LEVELDB_HOT_INCLUDE_TABLE_BUILDER_H_

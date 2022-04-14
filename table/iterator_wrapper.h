@@ -5,10 +5,10 @@
 #ifndef STORAGE_LEVELDB_TABLE_ITERATOR_WRAPPER_H_
 #define STORAGE_LEVELDB_TABLE_ITERATOR_WRAPPER_H_
 
-#include "leveldb/iterator.h"
-#include "leveldb/slice.h"
+#include "leveldb_hot/iterator.h"
+#include "leveldb_hot/slice.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 // A internal wrapper class with an interface similar to Iterator that
 // caches the valid() and key() results for an underlying iterator.
@@ -87,6 +87,6 @@ class IteratorWrapper {
   Slice key_;
 };
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_TABLE_ITERATOR_WRAPPER_H_

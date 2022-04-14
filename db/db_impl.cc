@@ -22,11 +22,11 @@
 #include "db/table_cache.h"
 #include "db/version_set.h"
 #include "db/write_batch_internal.h"
-#include "leveldb/db.h"
-#include "leveldb/env.h"
-#include "leveldb/status.h"
-#include "leveldb/table.h"
-#include "leveldb/table_builder.h"
+#include "leveldb_hot/db.h"
+#include "leveldb_hot/env.h"
+#include "leveldb_hot/status.h"
+#include "leveldb_hot/table.h"
+#include "leveldb_hot/table_builder.h"
 #include "port/port.h"
 #include "table/block.h"
 #include "table/merger.h"
@@ -35,7 +35,7 @@
 #include "util/logging.h"
 #include "util/mutexlock.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 const int kNumNonTableCacheFiles = 10;
 
@@ -1566,4 +1566,4 @@ Status DestroyDB(const std::string& dbname, const Options& options) {
   return result;
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

@@ -6,11 +6,11 @@
 
 #include <cstdio>
 
-#include "leveldb/env.h"
+#include "leveldb_hot/env.h"
 #include "util/coding.h"
 #include "util/crc32c.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 namespace log {
 
 Reader::Reporter::~Reporter() = default;
@@ -271,4 +271,4 @@ unsigned int Reader::ReadPhysicalRecord(Slice* result) {
 }
 
 }  // namespace log
-}  // namespace leveldb
+}  // namespace leveldb_hot

@@ -37,14 +37,14 @@
   (5) All of the pointer arguments must be non-NULL.
 */
 
-#ifndef STORAGE_LEVELDB_INCLUDE_C_H_
-#define STORAGE_LEVELDB_INCLUDE_C_H_
+#ifndef STORAGE_LEVELDB_HOT_INCLUDE_C_H_
+#define STORAGE_LEVELDB_HOT_INCLUDE_C_H_
 
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdint.h>
 
-#include "leveldb/export.h"
+#include "leveldb_hot/export.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -267,4 +267,4 @@ LEVELDB_EXPORT int leveldb_minor_version(void);
 } /* end extern "C" */
 #endif
 
-#endif /* STORAGE_LEVELDB_INCLUDE_C_H_ */
+#endif /* STORAGE_LEVELDB_HOT_INCLUDE_C_H_ */

@@ -8,9 +8,9 @@
 #include <string>
 
 #include "gtest/gtest.h"
-#include "leveldb/slice.h"
+#include "leveldb_hot/slice.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 TEST(Logging, NumberToString) {
   ASSERT_EQ("0", NumberToString(0));
@@ -137,4 +137,4 @@ TEST(Logging, ConsumeDecimalNumberNoDigits) {
   ConsumeDecimalNumberNoDigitsTest(std::string("\377123", 4));
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

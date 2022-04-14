@@ -7,7 +7,7 @@
 
 #include <string>
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class Histogram {
  public:
@@ -39,6 +39,6 @@ class Histogram {
   double buckets_[kNumBuckets];
 };
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_UTIL_HISTOGRAM_H_

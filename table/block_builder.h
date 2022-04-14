@@ -8,9 +8,9 @@
 #include <cstdint>
 #include <vector>
 
-#include "leveldb/slice.h"
+#include "leveldb_hot/slice.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 struct Options;
 
@@ -49,6 +49,6 @@ class BlockBuilder {
   std::string last_key_;
 };
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_TABLE_BLOCK_BUILDER_H_

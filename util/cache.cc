@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include "leveldb/cache.h"
+#include "leveldb_hot/cache.h"
 
 #include <cassert>
 #include <cstdio>
@@ -13,7 +13,7 @@
 #include "util/hash.h"
 #include "util/mutexlock.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 Cache::~Cache() {}
 
@@ -398,4 +398,4 @@ class ShardedLRUCache : public Cache {
 
 Cache* NewLRUCache(size_t capacity) { return new ShardedLRUCache(capacity); }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

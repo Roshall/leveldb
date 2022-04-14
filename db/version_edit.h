@@ -11,7 +11,7 @@
 
 #include "db/dbformat.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class VersionSet;
 
@@ -110,6 +110,6 @@ class VersionEdit {
   std::vector<std::pair<int, FileMetaData>> new_files_;
 };
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_DB_VERSION_EDIT_H_

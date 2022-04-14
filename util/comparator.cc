@@ -2,18 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include "leveldb/comparator.h"
+#include "leveldb_hot/comparator.h"
 
 #include <algorithm>
 #include <cstdint>
 #include <string>
 #include <type_traits>
 
-#include "leveldb/slice.h"
+#include "leveldb_hot/slice.h"
 #include "util/logging.h"
 #include "util/no_destructor.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 Comparator::~Comparator() = default;
 
@@ -72,4 +72,4 @@ const Comparator* BytewiseComparator() {
   return singleton.get();
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

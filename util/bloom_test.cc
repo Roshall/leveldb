@@ -3,12 +3,12 @@
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
 #include "gtest/gtest.h"
-#include "leveldb/filter_policy.h"
+#include "leveldb_hot/filter_policy.h"
 #include "util/coding.h"
 #include "util/logging.h"
 #include "util/testutil.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 static const int kVerbose = 1;
 
@@ -151,4 +151,4 @@ TEST_F(BloomTest, VaryingLengths) {
 
 // Different bits-per-byte
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

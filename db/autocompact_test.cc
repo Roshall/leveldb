@@ -4,11 +4,11 @@
 
 #include "gtest/gtest.h"
 #include "db/db_impl.h"
-#include "leveldb/cache.h"
-#include "leveldb/db.h"
+#include "leveldb_hot/cache.h"
+#include "leveldb_hot/db.h"
 #include "util/testutil.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class AutoCompactTest : public testing::Test {
  public:
@@ -107,4 +107,4 @@ TEST_F(AutoCompactTest, ReadAll) { DoReads(kCount); }
 
 TEST_F(AutoCompactTest, ReadHalf) { DoReads(kCount / 2); }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

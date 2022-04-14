@@ -14,9 +14,9 @@
 #include <sstream>
 #include <thread>
 
-#include "leveldb/env.h"
+#include "leveldb_hot/env.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class WindowsLogger final : public Logger {
  public:
@@ -119,6 +119,6 @@ class WindowsLogger final : public Logger {
   std::FILE* const fp_;
 };
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_UTIL_WINDOWS_LOGGER_H_

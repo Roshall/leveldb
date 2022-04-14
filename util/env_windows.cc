@@ -24,8 +24,8 @@
 #include <string>
 #include <vector>
 
-#include "leveldb/env.h"
-#include "leveldb/slice.h"
+#include "leveldb_hot/env.h"
+#include "leveldb_hot/slice.h"
 #include "port/port.h"
 #include "port/thread_annotations.h"
 #include "util/env_windows_test_helper.h"
@@ -33,7 +33,7 @@
 #include "util/mutexlock.h"
 #include "util/windows_logger.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 namespace {
 
@@ -813,4 +813,4 @@ Env* Env::Default() {
   return env_container.env();
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

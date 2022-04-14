@@ -2,17 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#ifndef STORAGE_LEVELDB_INCLUDE_DB_H_
-#define STORAGE_LEVELDB_INCLUDE_DB_H_
+#ifndef STORAGE_LEVELDB_HOT_INCLUDE_DB_H_
+#define STORAGE_LEVELDB_HOT_INCLUDE_DB_H_
 
 #include <cstdint>
 #include <cstdio>
 
-#include "leveldb/export.h"
-#include "leveldb/iterator.h"
-#include "leveldb/options.h"
+#include "leveldb_hot/export.h"
+#include "leveldb_hot/iterator.h"
+#include "leveldb_hot/options.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 // Update CMakeLists.txt if you change these
 static const int kMajorVersion = 1;
@@ -162,6 +162,6 @@ LEVELDB_EXPORT Status DestroyDB(const std::string& name,
 LEVELDB_EXPORT Status RepairDB(const std::string& dbname,
                                const Options& options);
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
-#endif  // STORAGE_LEVELDB_INCLUDE_DB_H_
+#endif  // STORAGE_LEVELDB_HOT_INCLUDE_DB_H_

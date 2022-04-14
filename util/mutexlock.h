@@ -8,7 +8,7 @@
 #include "port/port.h"
 #include "port/thread_annotations.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 // Helper class that locks a mutex on construction and unlocks the mutex when
 // the destructor of the MutexLock object is invoked.
@@ -34,6 +34,6 @@ class SCOPED_LOCKABLE MutexLock {
   port::Mutex* const mu_;
 };
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_UTIL_MUTEXLOCK_H_

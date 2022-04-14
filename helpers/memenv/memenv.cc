@@ -10,13 +10,13 @@
 #include <string>
 #include <vector>
 
-#include "leveldb/env.h"
-#include "leveldb/status.h"
+#include "leveldb_hot/env.h"
+#include "leveldb_hot/status.h"
 #include "port/port.h"
 #include "port/thread_annotations.h"
 #include "util/mutexlock.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 namespace {
 
@@ -387,4 +387,4 @@ class InMemoryEnv : public EnvWrapper {
 
 Env* NewMemEnv(Env* base_env) { return new InMemoryEnv(base_env); }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

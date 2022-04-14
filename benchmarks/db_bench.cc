@@ -8,12 +8,12 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include "leveldb/cache.h"
-#include "leveldb/comparator.h"
-#include "leveldb/db.h"
-#include "leveldb/env.h"
-#include "leveldb/filter_policy.h"
-#include "leveldb/write_batch.h"
+#include "leveldb_hot/cache.h"
+#include "leveldb_hot/comparator.h"
+#include "leveldb_hot/db.h"
+#include "leveldb_hot/env.h"
+#include "leveldb_hot/filter_policy.h"
+#include "leveldb_hot/write_batch.h"
 #include "port/port.h"
 #include "util/crc32c.h"
 #include "util/histogram.h"
@@ -121,10 +121,10 @@ static bool FLAGS_reuse_logs = false;
 // Use the db with the following name.
 static const char* FLAGS_db = nullptr;
 
-namespace leveldb {
+namespace leveldb_hot {
 
 namespace {
-leveldb::Env* g_env = nullptr;
+leveldb_hot::Env* g_env = nullptr;
 
 class CountComparator : public Comparator {
  public:
@@ -1016,20 +1016,20 @@ class Benchmark {
   }
 };
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 int main(int argc, char** argv) {
-  FLAGS_write_buffer_size = leveldb::Options().write_buffer_size;
-  FLAGS_max_file_size = leveldb::Options().max_file_size;
-  FLAGS_block_size = leveldb::Options().block_size;
-  FLAGS_open_files = leveldb::Options().max_open_files;
+  FLAGS_write_buffer_size = leveldb_hot::Options().write_buffer_size;
+  FLAGS_max_file_size = leveldb_hot::Options().max_file_size;
+  FLAGS_block_size = leveldb_hot::Options().block_size;
+  FLAGS_open_files = leveldb_hot::Options().max_open_files;
   std::string default_db_path;
 
   for (int i = 1; i < argc; i++) {
     double d;
     int n;
     char junk;
-    if (leveldb::Slice(argv[i]).starts_with("--benchmarks=")) {
+    if (leveldb_hot::Slice(argv[i]).starts_with("--benchmarks=")) {
       FLAGS_benchmarks = argv[i] + strlen("--benchmarks=");
     } else if (sscanf(argv[i], "--compression_ratio=%lf%c", &d, &junk) == 1) {
       FLAGS_compression_ratio = d;
@@ -1075,16 +1075,16 @@ int main(int argc, char** argv) {
     }
   }
 
-  leveldb::g_env = leveldb::Env::Default();
+  leveldb_hot::g_env = leveldb_hot::Env::Default();
 
   // Choose a location for the test database if none given with --db=<path>
   if (FLAGS_db == nullptr) {
-    leveldb::g_env->GetTestDirectory(&default_db_path);
+    leveldb_hot::g_env->GetTestDirectory(&default_db_path);
     default_db_path += "/dbbench";
     FLAGS_db = default_db_path.c_str();
   }
 
-  leveldb::Benchmark benchmark;
+  leveldb_hot::Benchmark benchmark;
   benchmark.Run();
   return 0;
 }

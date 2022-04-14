@@ -10,11 +10,11 @@
 #include <cstdint>
 #include <string>
 
-#include "leveldb/slice.h"
-#include "leveldb/status.h"
+#include "leveldb_hot/slice.h"
+#include "leveldb_hot/status.h"
 #include "port/port.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class Env;
 
@@ -78,6 +78,6 @@ bool ParseFileName(const std::string& filename, uint64_t* number,
 Status SetCurrentFile(Env* env, const std::string& dbname,
                       uint64_t descriptor_number);
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_DB_FILENAME_H_

@@ -2,21 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include "leveldb/table_builder.h"
+#include "leveldb_hot/table_builder.h"
 
 #include <cassert>
 
-#include "leveldb/comparator.h"
-#include "leveldb/env.h"
-#include "leveldb/filter_policy.h"
-#include "leveldb/options.h"
+#include "leveldb_hot/comparator.h"
+#include "leveldb_hot/env.h"
+#include "leveldb_hot/filter_policy.h"
+#include "leveldb_hot/options.h"
 #include "table/block_builder.h"
 #include "table/filter_block.h"
 #include "table/format.h"
 #include "util/coding.h"
 #include "util/crc32c.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 struct TableBuilder::Rep {
   Rep(const Options& opt, WritableFile* f)
@@ -262,4 +262,4 @@ uint64_t TableBuilder::NumEntries() const { return rep_->num_entries; }
 
 uint64_t TableBuilder::FileSize() const { return rep_->offset; }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

@@ -8,11 +8,11 @@
 #include "db/filename.h"
 #include "db/table_cache.h"
 #include "db/version_edit.h"
-#include "leveldb/db.h"
-#include "leveldb/env.h"
-#include "leveldb/iterator.h"
+#include "leveldb_hot/db.h"
+#include "leveldb_hot/env.h"
+#include "leveldb_hot/iterator.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 Status BuildTable(const std::string& dbname, Env* env, const Options& options,
                   TableCache* table_cache, Iterator* iter, FileMetaData* meta) {
@@ -89,4 +89,4 @@ Status BuildTable(const std::string& dbname, Env* env, const Options& options,
   return s;
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

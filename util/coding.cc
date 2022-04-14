@@ -4,7 +4,7 @@
 
 #include "util/coding.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 void PutFixed32(std::string* dst, uint32_t value) {
   char buf[sizeof(value)];
@@ -153,4 +153,4 @@ bool GetLengthPrefixedSlice(Slice* input, Slice* result) {
   }
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

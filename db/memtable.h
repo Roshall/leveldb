@@ -9,10 +9,10 @@
 
 #include "db/dbformat.h"
 #include "db/skiplist.h"
-#include "leveldb/db.h"
+#include "leveldb_hot/db.h"
 #include "util/arena.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class InternalKeyComparator;
 class MemTableIterator;
@@ -82,6 +82,6 @@ class MemTable {
   Table table_;
 };
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_DB_MEMTABLE_H_

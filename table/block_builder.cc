@@ -31,11 +31,11 @@
 #include <algorithm>
 #include <cassert>
 
-#include "leveldb/comparator.h"
-#include "leveldb/options.h"
+#include "leveldb_hot/comparator.h"
+#include "leveldb_hot/options.h"
 #include "util/coding.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 BlockBuilder::BlockBuilder(const Options* options)
     : options_(options), restarts_(), counter_(0), finished_(false) {
@@ -104,4 +104,4 @@ void BlockBuilder::Add(const Slice& key, const Slice& value) {
   counter_++;
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

@@ -5,9 +5,9 @@
 #ifndef STORAGE_LEVELDB_TABLE_TWO_LEVEL_ITERATOR_H_
 #define STORAGE_LEVELDB_TABLE_TWO_LEVEL_ITERATOR_H_
 
-#include "leveldb/iterator.h"
+#include "leveldb_hot/iterator.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 struct ReadOptions;
 
@@ -26,6 +26,6 @@ Iterator* NewTwoLevelIterator(
                                 const Slice& index_value),
     void* arg, const ReadOptions& options);
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_TABLE_TWO_LEVEL_ITERATOR_H_

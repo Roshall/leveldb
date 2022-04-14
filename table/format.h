@@ -8,11 +8,11 @@
 #include <cstdint>
 #include <string>
 
-#include "leveldb/slice.h"
-#include "leveldb/status.h"
-#include "leveldb/table_builder.h"
+#include "leveldb_hot/slice.h"
+#include "leveldb_hot/status.h"
+#include "leveldb_hot/table_builder.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class Block;
 class RandomAccessFile;
@@ -94,6 +94,6 @@ Status ReadBlock(RandomAccessFile* file, const ReadOptions& options,
 inline BlockHandle::BlockHandle()
     : offset_(~static_cast<uint64_t>(0)), size_(~static_cast<uint64_t>(0)) {}
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_TABLE_FORMAT_H_

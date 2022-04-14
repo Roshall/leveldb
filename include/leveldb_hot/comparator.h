@@ -2,14 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#ifndef STORAGE_LEVELDB_INCLUDE_COMPARATOR_H_
-#define STORAGE_LEVELDB_INCLUDE_COMPARATOR_H_
+#ifndef STORAGE_LEVELDB_HOT_INCLUDE_COMPARATOR_H_
+#define STORAGE_LEVELDB_HOT_INCLUDE_COMPARATOR_H_
 
 #include <string>
 
-#include "leveldb/export.h"
+#include "leveldb_hot/export.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class Slice;
 
@@ -59,6 +59,6 @@ class LEVELDB_EXPORT Comparator {
 // must not be deleted.
 LEVELDB_EXPORT const Comparator* BytewiseComparator();
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
-#endif  // STORAGE_LEVELDB_INCLUDE_COMPARATOR_H_
+#endif  // STORAGE_LEVELDB_HOT_INCLUDE_COMPARATOR_H_

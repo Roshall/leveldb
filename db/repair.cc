@@ -34,11 +34,11 @@
 #include "db/table_cache.h"
 #include "db/version_edit.h"
 #include "db/write_batch_internal.h"
-#include "leveldb/comparator.h"
-#include "leveldb/db.h"
-#include "leveldb/env.h"
+#include "leveldb_hot/comparator.h"
+#include "leveldb_hot/db.h"
+#include "leveldb_hot/env.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 namespace {
 
@@ -448,4 +448,4 @@ Status RepairDB(const std::string& dbname, const Options& options) {
   return repairer.Run();
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

@@ -11,11 +11,11 @@
 #include <string>
 
 #include "db/dbformat.h"
-#include "leveldb/cache.h"
-#include "leveldb/table.h"
+#include "leveldb_hot/cache.h"
+#include "leveldb_hot/table.h"
 #include "port/port.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class Env;
 
@@ -56,6 +56,6 @@ class TableCache {
   Cache* cache_;
 };
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_DB_TABLE_CACHE_H_

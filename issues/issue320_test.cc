@@ -10,11 +10,11 @@
 #include <vector>
 
 #include "gtest/gtest.h"
-#include "leveldb/db.h"
-#include "leveldb/write_batch.h"
+#include "leveldb_hot/db.h"
+#include "leveldb_hot/write_batch.h"
 #include "util/testutil.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 namespace {
 
@@ -123,4 +123,4 @@ TEST(Issue320, Test) {
   DestroyDB(dbpath, options);
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

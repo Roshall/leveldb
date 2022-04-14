@@ -17,9 +17,9 @@
 #include <sstream>
 #include <thread>
 
-#include "leveldb/env.h"
+#include "leveldb_hot/env.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class PosixLogger final : public Logger {
  public:
@@ -125,6 +125,6 @@ class PosixLogger final : public Logger {
   std::FILE* const fp_;
 };
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_UTIL_POSIX_LOGGER_H_

@@ -9,7 +9,7 @@
 #include "port/port.h"
 #include "util/logging.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 TEST(FileNameTest, Parse) {
   Slice db;
@@ -124,4 +124,4 @@ TEST(FileNameTest, Construction) {
   ASSERT_EQ(kInfoLogFile, type);
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

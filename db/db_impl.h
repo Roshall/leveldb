@@ -13,12 +13,12 @@
 #include "db/dbformat.h"
 #include "db/log_writer.h"
 #include "db/snapshot.h"
-#include "leveldb/db.h"
-#include "leveldb/env.h"
+#include "leveldb_hot/db.h"
+#include "leveldb_hot/env.h"
 #include "port/port.h"
 #include "port/thread_annotations.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class MemTable;
 class TableCache;
@@ -212,6 +212,6 @@ Options SanitizeOptions(const std::string& db,
                         const InternalFilterPolicy* ipolicy,
                         const Options& src);
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_DB_DB_IMPL_H_

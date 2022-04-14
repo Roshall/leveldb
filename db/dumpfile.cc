@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include "leveldb/dumpfile.h"
+#include "leveldb_hot/dumpfile.h"
 
 #include <cstdio>
 
@@ -11,15 +11,15 @@
 #include "db/log_reader.h"
 #include "db/version_edit.h"
 #include "db/write_batch_internal.h"
-#include "leveldb/env.h"
-#include "leveldb/iterator.h"
-#include "leveldb/options.h"
-#include "leveldb/status.h"
-#include "leveldb/table.h"
-#include "leveldb/write_batch.h"
+#include "leveldb_hot/env.h"
+#include "leveldb_hot/iterator.h"
+#include "leveldb_hot/options.h"
+#include "leveldb_hot/status.h"
+#include "leveldb_hot/table.h"
+#include "leveldb_hot/write_batch.h"
 #include "util/logging.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 namespace {
 
@@ -229,4 +229,4 @@ Status DumpFile(Env* env, const std::string& fname, WritableFile* dst) {
   return Status::InvalidArgument(fname + ": not a dump-able file type");
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

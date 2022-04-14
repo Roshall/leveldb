@@ -7,10 +7,10 @@
 // mutation has been added just before the current key.
 
 #include "gtest/gtest.h"
-#include "leveldb/db.h"
+#include "leveldb_hot/db.h"
 #include "util/testutil.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 TEST(Issue200, Test) {
   // Get rid of any state from an old run.
@@ -51,4 +51,4 @@ TEST(Issue200, Test) {
   DestroyDB(dbpath, options);
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

@@ -8,9 +8,9 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "leveldb/iterator.h"
+#include "leveldb_hot/iterator.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 struct BlockContents;
 class Comparator;
@@ -39,6 +39,6 @@ class Block {
   bool owned_;               // Block owns data_[]
 };
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
 #endif  // STORAGE_LEVELDB_TABLE_BLOCK_H_

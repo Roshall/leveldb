@@ -9,11 +9,11 @@
 
 #include "gtest/gtest.h"
 #include "db/db_impl.h"
-#include "leveldb/db.h"
-#include "leveldb/env.h"
+#include "leveldb_hot/db.h"
+#include "leveldb_hot/env.h"
 #include "util/testutil.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class MemEnvTest : public testing::Test {
  public:
@@ -256,4 +256,4 @@ TEST_F(MemEnvTest, DBTest) {
   delete db;
 }
 
-}  // namespace leveldb
+}  // namespace leveldb_hot

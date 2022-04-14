@@ -15,15 +15,15 @@
 // they want something more sophisticated (like scan-resistance, a
 // custom eviction policy, variable cache sizing, etc.)
 
-#ifndef STORAGE_LEVELDB_INCLUDE_CACHE_H_
-#define STORAGE_LEVELDB_INCLUDE_CACHE_H_
+#ifndef STORAGE_LEVELDB_HOT_INCLUDE_CACHE_H_
+#define STORAGE_LEVELDB_HOT_INCLUDE_CACHE_H_
 
 #include <cstdint>
 
-#include "leveldb/export.h"
-#include "leveldb/slice.h"
+#include "leveldb_hot/export.h"
+#include "leveldb_hot/slice.h"
 
-namespace leveldb {
+namespace leveldb_hot {
 
 class LEVELDB_EXPORT Cache;
 
@@ -98,6 +98,6 @@ class LEVELDB_EXPORT Cache {
   virtual size_t TotalCharge() const = 0;
 };
 
-}  // namespace leveldb
+}  // namespace leveldb_hot
 
-#endif  // STORAGE_LEVELDB_INCLUDE_CACHE_H_
+#endif  // STORAGE_LEVELDB_HOT_INCLUDE_CACHE_H_
