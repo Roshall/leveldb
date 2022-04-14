@@ -23,16 +23,16 @@ if(NOT CMAKE_CXX_STANDARD)
 endif(NOT CMAKE_CXX_STANDARD)
 
 if (WIN32)
-  set(LEVELDB_PLATFORM_NAME LEVELDB_PLATFORM_WINDOWS)
+  set(LEVELDB_HOT_PLATFORM_NAME LEVELDB_HOT_PLATFORM_WINDOWS)
   # TODO(cmumford): Make UNICODE configurable for Windows.
   add_definitions(-D_UNICODE -DUNICODE)
 else (WIN32)
-  set(LEVELDB_PLATFORM_NAME LEVELDB_PLATFORM_POSIX)
+  set(LEVELDB_HOT_PLATFORM_NAME LEVELDB_HOT_PLATFORM_POSIX)
 endif (WIN32)
 
-option(LEVELDB_BUILD_TESTS "Build LevelDB's unit tests" ON)
-option(LEVELDB_BUILD_BENCHMARKS "Build LevelDB's benchmarks" ON)
-option(LEVELDB_INSTALL "Install LevelDB's header and library" OFF)
+option(LEVELDB_HOT_BUILD_TESTS "Build LevelDB's unit tests" ON)
+option(LEVELDB_HOT_BUILD_BENCHMARKS "Build LevelDB's benchmarks" ON)
+option(LEVELDB_HOT_INSTALL "Install LevelDB's header and library" ON)
 
 include(CheckIncludeFile)
 check_include_file("unistd.h" HAVE_UNISTD_H)
@@ -83,7 +83,7 @@ check_cxx_compiler_flag(-Wthread-safety HAVE_CLANG_THREAD_SAFETY)
 
 # Used by googletest.
 check_cxx_compiler_flag(-Wno-missing-field-initializers
-                        LEVELDB_HAVE_NO_MISSING_FIELD_INITIALIZERS)
+                        LEVELDB_HOT_HAVE_NO_MISSING_FIELD_INITIALIZERS)
 
 include(CheckCXXSourceCompiles)
 
@@ -95,12 +95,13 @@ check_cxx_source_compiles("
 int main() { std::string str; return 0; }
 " HAVE_CXX17_HAS_INCLUDE)
 
-set(LEVELDB_PUBLIC_INCLUDE_DIR "include/leveldb_hot")
-set(LEVELDB_PORT_CONFIG_DIR "include/port")
+
+set(LEVELDB_HOT_PUBLIC_INCLUDE_DIR "include/leveldb_hot")
+set(LEVELDB_HOT_PORT_CONFIG_DIR "include/port")
 
 configure_file(
   "port/port_config.h.in"
-  "${PROJECT_BINARY_DIR}/${LEVELDB_PORT_CONFIG_DIR}/port_config.h"
+  "${PROJECT_BINARY_DIR}/${LEVELDB_HOT_PORT_CONFIG_DIR}/port_config.h"
 )
 
 include_directories(
@@ -119,7 +120,7 @@ include(GNUInstallDirs)
 add_library(leveldb_hot "")
 target_sources(leveldb_hot
   PRIVATE
-    "${PROJECT_BINARY_DIR}/${LEVELDB_PORT_CONFIG_DIR}/port_config.h"
+    "${PROJECT_BINARY_DIR}/${LEVELDB_HOT_PORT_CONFIG_DIR}/port_config.h"
     "db/builder.cc"
     "db/builder.h"
     "db/c.cc"
@@ -192,21 +193,21 @@ target_sources(leveldb_hot
 
   # Only CMake 3.3+ supports PUBLIC sources in targets exported by "install".
   $<$<VERSION_GREATER:CMAKE_VERSION,3.2>:PUBLIC>
-    "${LEVELDB_PUBLIC_INCLUDE_DIR}/c.h"
-    "${LEVELDB_PUBLIC_INCLUDE_DIR}/cache.h"
-    "${LEVELDB_PUBLIC_INCLUDE_DIR}/comparator.h"
-    "${LEVELDB_PUBLIC_INCLUDE_DIR}/db.h"
-    "${LEVELDB_PUBLIC_INCLUDE_DIR}/dumpfile.h"
-    "${LEVELDB_PUBLIC_INCLUDE_DIR}/env.h"
-    "${LEVELDB_PUBLIC_INCLUDE_DIR}/export.h"
-    "${LEVELDB_PUBLIC_INCLUDE_DIR}/filter_policy.h"
-    "${LEVELDB_PUBLIC_INCLUDE_DIR}/iterator.h"
-    "${LEVELDB_PUBLIC_INCLUDE_DIR}/options.h"
-    "${LEVELDB_PUBLIC_INCLUDE_DIR}/slice.h"
-    "${LEVELDB_PUBLIC_INCLUDE_DIR}/status.h"
-    "${LEVELDB_PUBLIC_INCLUDE_DIR}/table_builder.h"
-    "${LEVELDB_PUBLIC_INCLUDE_DIR}/table.h"
-    "${LEVELDB_PUBLIC_INCLUDE_DIR}/write_batch.h"
+    "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/c.h"
+    "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/cache.h"
+    "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/comparator.h"
+    "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/db.h"
+    "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/dumpfile.h"
+    "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/env.h"
+    "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/export.h"
+    "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/filter_policy.h"
+    "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/iterator.h"
+    "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/options.h"
+    "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/slice.h"
+    "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/status.h"
+    "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/table_builder.h"
+    "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/table.h"
+    "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/write_batch.h"
 )
 
 if (WIN32)
@@ -242,14 +243,14 @@ set_target_properties(leveldb_hot
 target_compile_definitions(leveldb_hot
   PRIVATE
     # Used by include/export.h when building shared libraries.
-    LEVELDB_COMPILE_LIBRARY
+    LEVELDB_HOT_COMPILE_LIBRARY
     # Used by port/port.h.
-    ${LEVELDB_PLATFORM_NAME}=1
+    ${LEVELDB_HOT_PLATFORM_NAME}=1
 )
 if (NOT HAVE_CXX17_HAS_INCLUDE)
   target_compile_definitions(leveldb_hot
     PRIVATE
-      LEVELDB_HAS_PORT_CONFIG_H=1
+      LEVELDB_HOT_HAS_PORT_CONFIG_H=1
   )
 endif(NOT HAVE_CXX17_HAS_INCLUDE)
 
@@ -257,7 +258,7 @@ if(BUILD_SHARED_LIBS)
   target_compile_definitions(leveldb_hot
     PUBLIC
       # Used by include/export.h.
-      LEVELDB_SHARED_LIBRARY
+      LEVELDB_HOT_SHARED_LIBRARY
   )
 endif(BUILD_SHARED_LIBS)
 
@@ -286,7 +287,7 @@ add_executable(leveldb_hotutil
 )
 target_link_libraries(leveldb_hotutil leveldb_hot)
 
-if(LEVELDB_BUILD_TESTS)
+if(LEVELDB_HOT_BUILD_TESTS)
   enable_testing()
 
   # Prevent overriding the parent project's compiler/linker settings on Windows.
@@ -299,12 +300,12 @@ if(LEVELDB_BUILD_TESTS)
   add_subdirectory("third_party/googletest")
 
   # GoogleTest triggers a missing field initializers warning.
-  if(LEVELDB_HAVE_NO_MISSING_FIELD_INITIALIZERS)
+  if(LEVELDB_HOT_HAVE_NO_MISSING_FIELD_INITIALIZERS)
     set_property(TARGET gtest
         APPEND PROPERTY COMPILE_OPTIONS -Wno-missing-field-initializers)
     set_property(TARGET gmock
         APPEND PROPERTY COMPILE_OPTIONS -Wno-missing-field-initializers)
-  endif(LEVELDB_HAVE_NO_MISSING_FIELD_INITIALIZERS)
+  endif(LEVELDB_HOT_HAVE_NO_MISSING_FIELD_INITIALIZERS)
 
   add_executable(leveldb_hot_tests "")
   target_sources(leveldb_hot_tests
@@ -313,7 +314,7 @@ if(LEVELDB_BUILD_TESTS)
       # "issues/issue178_test.cc"
       # "issues/issue200_test.cc"
       # "issues/issue320_test.cc"
-      "${PROJECT_BINARY_DIR}/${LEVELDB_PORT_CONFIG_DIR}/port_config.h"
+      "${PROJECT_BINARY_DIR}/${LEVELDB_HOT_PORT_CONFIG_DIR}/port_config.h"
       # "util/env_test.cc"
       "util/status_test.cc"
       "util/no_destructor_test.cc"
@@ -349,12 +350,12 @@ if(LEVELDB_BUILD_TESTS)
   target_link_libraries(leveldb_hot_tests leveldb_hot gmock gtest gtest_main)
   target_compile_definitions(leveldb_hot_tests
     PRIVATE
-      ${LEVELDB_PLATFORM_NAME}=1
+      ${LEVELDB_HOT_PLATFORM_NAME}=1
   )
   if (NOT HAVE_CXX17_HAS_INCLUDE)
     target_compile_definitions(leveldb_hot_tests
       PRIVATE
-        LEVELDB_HAS_PORT_CONFIG_H=1
+        LEVELDB_HOT_HAS_PORT_CONFIG_H=1
     )
   endif(NOT HAVE_CXX17_HAS_INCLUDE)
 
@@ -366,7 +367,7 @@ if(LEVELDB_BUILD_TESTS)
     add_executable("${test_target_name}" "")
     target_sources("${test_target_name}"
       PRIVATE
-        "${PROJECT_BINARY_DIR}/${LEVELDB_PORT_CONFIG_DIR}/port_config.h"
+        "${PROJECT_BINARY_DIR}/${LEVELDB_HOT_PORT_CONFIG_DIR}/port_config.h"
         "util/testutil.cc"
         "util/testutil.h"
 
@@ -375,12 +376,12 @@ if(LEVELDB_BUILD_TESTS)
     target_link_libraries("${test_target_name}" leveldb_hot gmock gtest)
     target_compile_definitions("${test_target_name}"
       PRIVATE
-        ${LEVELDB_PLATFORM_NAME}=1
+        ${LEVELDB_HOT_PLATFORM_NAME}=1
     )
     if (NOT HAVE_CXX17_HAS_INCLUDE)
       target_compile_definitions("${test_target_name}"
         PRIVATE
-          LEVELDB_HAS_PORT_CONFIG_H=1
+          LEVELDB_HOT_HAS_PORT_CONFIG_H=1
       )
     endif(NOT HAVE_CXX17_HAS_INCLUDE)
 
@@ -398,9 +399,9 @@ if(LEVELDB_BUILD_TESTS)
       leveldb_hot_test("util/env_posix_test.cc")
     endif (WIN32)
   endif(NOT BUILD_SHARED_LIBS)
-endif(LEVELDB_BUILD_TESTS)
+endif(LEVELDB_HOT_BUILD_TESTS)
 
-if(LEVELDB_BUILD_BENCHMARKS)
+if(LEVELDB_HOT_BUILD_BENCHMARKS)
   # This project uses Google benchmark for benchmarking.
   set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
   set(BENCHMARK_ENABLE_EXCEPTIONS OFF CACHE BOOL "" FORCE)
@@ -412,7 +413,7 @@ if(LEVELDB_BUILD_BENCHMARKS)
     add_executable("${bench_target_name}" "")
     target_sources("${bench_target_name}"
       PRIVATE
-        "${PROJECT_BINARY_DIR}/${LEVELDB_PORT_CONFIG_DIR}/port_config.h"
+        "${PROJECT_BINARY_DIR}/${LEVELDB_HOT_PORT_CONFIG_DIR}/port_config.h"
         "util/histogram.cc"
         "util/histogram.h"
         "util/testutil.cc"
@@ -423,12 +424,12 @@ if(LEVELDB_BUILD_BENCHMARKS)
     target_link_libraries("${bench_target_name}" leveldb_hot gmock gtest benchmark)
     target_compile_definitions("${bench_target_name}"
       PRIVATE
-        ${LEVELDB_PLATFORM_NAME}=1
+        ${LEVELDB_HOT_PLATFORM_NAME}=1
     )
     if (NOT HAVE_CXX17_HAS_INCLUDE)
       target_compile_definitions("${bench_target_name}"
         PRIVATE
-          LEVELDB_HAS_PORT_CONFIG_H=1
+          LEVELDB_HOT_HAS_PORT_CONFIG_H=1
       )
     endif(NOT HAVE_CXX17_HAS_INCLUDE)
   endfunction(leveldb_hot_benchmark)
@@ -462,54 +463,54 @@ int main() {
     leveldb_hot_benchmark("benchmarks/db_bench_tree_db.cc")
     target_link_libraries(db_bench_tree_db kyotocabinet)
   endif(HAVE_KYOTOCABINET)
-endif(LEVELDB_BUILD_BENCHMARKS)
+endif(LEVELDB_HOT_BUILD_BENCHMARKS)
 
-#if(LEVELDB_INSTALL)
-#  install(TARGETS leveldb_hot
-#    EXPORT leveldb_hotTargets
-#    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-#    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#  )
-#  install(
-#    FILES
-#      "${LEVELDB_PUBLIC_INCLUDE_DIR}/c.h"
-#      "${LEVELDB_PUBLIC_INCLUDE_DIR}/cache.h"
-#      "${LEVELDB_PUBLIC_INCLUDE_DIR}/comparator.h"
-#      "${LEVELDB_PUBLIC_INCLUDE_DIR}/db.h"
-#      "${LEVELDB_PUBLIC_INCLUDE_DIR}/dumpfile.h"
-#      "${LEVELDB_PUBLIC_INCLUDE_DIR}/env.h"
-#      "${LEVELDB_PUBLIC_INCLUDE_DIR}/export.h"
-#      "${LEVELDB_PUBLIC_INCLUDE_DIR}/filter_policy.h"
-#      "${LEVELDB_PUBLIC_INCLUDE_DIR}/iterator.h"
-#      "${LEVELDB_PUBLIC_INCLUDE_DIR}/options.h"
-#      "${LEVELDB_PUBLIC_INCLUDE_DIR}/slice.h"
-#      "${LEVELDB_PUBLIC_INCLUDE_DIR}/status.h"
-#      "${LEVELDB_PUBLIC_INCLUDE_DIR}/table_builder.h"
-#      "${LEVELDB_PUBLIC_INCLUDE_DIR}/table.h"
-#      "${LEVELDB_PUBLIC_INCLUDE_DIR}/write_batch.h"
-#    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/leveldb_hot"
-#  )
-#
-#  include(CMakePackageConfigHelpers)
-#  configure_package_config_file(
-#    "cmake/${PROJECT_NAME}Config.cmake.in"
-#    "${PROJECT_BINARY_DIR}/cmake/${PROJECT_NAME}Config.cmake"
-#    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
-#  )
-#  write_basic_package_version_file(
-#    "${PROJECT_BINARY_DIR}/cmake/${PROJECT_NAME}ConfigVersion.cmake"
-#    COMPATIBILITY SameMajorVersion
-#  )
-#  install(
-#    EXPORT leveldb_hotTargets
-#    NAMESPACE leveldb::
-#    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
-#  )
-#  install(
-#    FILES
-#      "${PROJECT_BINARY_DIR}/cmake/${PROJECT_NAME}Config.cmake"
-#      "${PROJECT_BINARY_DIR}/cmake/${PROJECT_NAME}ConfigVersion.cmake"
-#    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
-#  )
-#endif(LEVELDB_INSTALL)
+if(LEVELDB_HOT_INSTALL)
+  install(TARGETS leveldb_hot
+    EXPORT leveldb_hotTargets
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  )
+  install(
+    FILES
+      "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/c.h"
+      "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/cache.h"
+      "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/comparator.h"
+      "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/db.h"
+      "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/dumpfile.h"
+      "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/env.h"
+      "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/export.h"
+      "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/filter_policy.h"
+      "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/iterator.h"
+      "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/options.h"
+      "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/slice.h"
+      "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/status.h"
+      "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/table_builder.h"
+      "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/table.h"
+      "${LEVELDB_HOT_PUBLIC_INCLUDE_DIR}/write_batch.h"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/leveldb_hot"
+  )
+
+  include(CMakePackageConfigHelpers)
+  configure_package_config_file(
+    "cmake/${PROJECT_NAME}Config.cmake.in"
+    "${PROJECT_BINARY_DIR}/cmake/${PROJECT_NAME}Config.cmake"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+  )
+  write_basic_package_version_file(
+    "${PROJECT_BINARY_DIR}/cmake/${PROJECT_NAME}ConfigVersion.cmake"
+    COMPATIBILITY SameMajorVersion
+  )
+  install(
+    EXPORT leveldb_hotTargets
+    NAMESPACE leveldb_hot::
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+  )
+  install(
+    FILES
+      "${PROJECT_BINARY_DIR}/cmake/${PROJECT_NAME}Config.cmake"
+      "${PROJECT_BINARY_DIR}/cmake/${PROJECT_NAME}ConfigVersion.cmake"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+  )
+endif(LEVELDB_HOT_INSTALL)

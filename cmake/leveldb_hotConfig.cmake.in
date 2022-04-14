@@ -4,6 +4,6 @@
 
 @PACKAGE_INIT@
 
-include("${CMAKE_CURRENT_LIST_DIR}/leveldbTargets.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/leveldb_hotTargets.cmake")
 
-check_required_components(leveldb)
+check_required_components(leveldb_hot)
