@@ -30,7 +30,7 @@ enum CompressionType {
 };
 
 // Options to control the behavior of a database (passed to DB::Open)
-struct LEVELDB_EXPORT Options {
+struct LEVELDB_HOT_EXPORT Options {
   // Create an Options object with default values for all fields.
   Options();
 
@@ -143,7 +143,7 @@ struct LEVELDB_EXPORT Options {
 };
 
 // Options that control read operations
-struct LEVELDB_EXPORT ReadOptions {
+struct LEVELDB_HOT_EXPORT ReadOptions {
   ReadOptions() = default;
 
   // If true, all data read from underlying storage will be
@@ -162,7 +162,7 @@ struct LEVELDB_EXPORT ReadOptions {
 };
 
 // Options that control write operations
-struct LEVELDB_EXPORT WriteOptions {
+struct LEVELDB_HOT_EXPORT WriteOptions {
   WriteOptions() = default;
 
   // If true, the write will be flushed from the operating system

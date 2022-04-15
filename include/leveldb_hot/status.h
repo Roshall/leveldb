@@ -21,7 +21,7 @@
 
 namespace leveldb_hot {
 
-class LEVELDB_EXPORT Status {
+class LEVELDB_HOT_EXPORT Status {
  public:
   // Create a success status.
   Status() noexcept : state_(nullptr) {}

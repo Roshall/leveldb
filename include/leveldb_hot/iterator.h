@@ -21,7 +21,7 @@
 
 namespace leveldb_hot {
 
-class LEVELDB_EXPORT Iterator {
+class LEVELDB_HOT_EXPORT Iterator {
  public:
   Iterator();
 
@@ -102,10 +102,10 @@ class LEVELDB_EXPORT Iterator {
 };
 
 // Return an empty iterator (yields nothing).
-LEVELDB_EXPORT Iterator* NewEmptyIterator();
+LEVELDB_HOT_EXPORT Iterator* NewEmptyIterator();
 
 // Return an empty iterator with the specified status.
-LEVELDB_EXPORT Iterator* NewErrorIterator(const Status& status);
+LEVELDB_HOT_EXPORT Iterator* NewErrorIterator(const Status& status);
 
 }  // namespace leveldb_hot
 

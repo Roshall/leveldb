@@ -17,7 +17,7 @@ class Slice;
 // used as keys in an sstable or a database.  A Comparator implementation
 // must be thread-safe since leveldb may invoke its methods concurrently
 // from multiple threads.
-class LEVELDB_EXPORT Comparator {
+class LEVELDB_HOT_EXPORT Comparator {
  public:
   virtual ~Comparator();
 
@@ -57,7 +57,7 @@ class LEVELDB_EXPORT Comparator {
 // Return a builtin comparator that uses lexicographic byte-wise
 // ordering.  The result remains the property of this module and
 // must not be deleted.
-LEVELDB_EXPORT const Comparator* BytewiseComparator();
+LEVELDB_HOT_EXPORT const Comparator* BytewiseComparator();
 
 }  // namespace leveldb_hot
 

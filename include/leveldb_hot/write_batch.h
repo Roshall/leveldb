@@ -30,9 +30,9 @@ namespace leveldb_hot {
 
 class Slice;
 
-class LEVELDB_EXPORT WriteBatch {
+class LEVELDB_HOT_EXPORT WriteBatch {
  public:
-  class LEVELDB_EXPORT Handler {
+  class LEVELDB_HOT_EXPORT Handler {
    public:
     virtual ~Handler();
     virtual void Put(const Slice& key, const Slice& value) = 0;

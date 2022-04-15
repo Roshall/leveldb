@@ -25,13 +25,13 @@
 
 namespace leveldb_hot {
 
-class LEVELDB_EXPORT Cache;
+class LEVELDB_HOT_EXPORT Cache;
 
 // Create a new cache with a fixed size capacity.  This implementation
 // of Cache uses a least-recently-used eviction policy.
-LEVELDB_EXPORT Cache* NewLRUCache(size_t capacity);
+LEVELDB_HOT_EXPORT Cache* NewLRUCache(size_t capacity);
 
-class LEVELDB_EXPORT Cache {
+class LEVELDB_HOT_EXPORT Cache {
  public:
   Cache() = default;
 

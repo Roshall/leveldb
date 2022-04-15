@@ -24,7 +24,7 @@
 
 namespace leveldb_hot {
 
-class LEVELDB_EXPORT Slice {
+class LEVELDB_HOT_EXPORT Slice {
  public:
   // Create an empty slice.
   Slice() : data_(""), size_(0) {}
