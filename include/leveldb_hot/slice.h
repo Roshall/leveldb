@@ -73,6 +73,11 @@ class LEVELDB_HOT_EXPORT Slice {
     size_ -= n;
   }
 
+  void remove_suffix(size_t n) {
+    assert(n <= size());
+    size_ -= n;
+  }
+
   // Return a string that contains the copy of the referenced data.
   std::string ToString() const { return std::string(data_, size_); }
 

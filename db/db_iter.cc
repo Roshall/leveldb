@@ -67,7 +67,9 @@ class DBIter : public Iterator {
   }
   Slice value() const override {
     assert(valid_);
-    return (direction_ == kForward) ? iter_->value() : saved_value_;
+    Slice result { (direction_ == kForward) ? iter_->value() : saved_value_ };
+    result.remove_suffix(1);
+    return result;
   }
   Status status() const override {
     if (status_.ok()) {
