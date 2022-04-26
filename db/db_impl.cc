@@ -1003,9 +1003,11 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
       }
       compact->current_output()->largest.DecodeFrom(key);
       auto value = input->value();
-      auto score_raw = static_cast<uint8_t>(value[value.size()-1]);
-      scores.write +=  score_raw & 0x7;
-      scores.read += score_raw >> 3;
+      if (!value.empty()) { // non-deleted
+        auto score_raw = static_cast<uint8_t>(value[value.size()-1]);
+        scores.write +=  score_raw & 0x7;
+        scores.read += score_raw >> 3;
+      }
       compact->builder->Add(key, value);
 
       // Close output file if it is big enough
