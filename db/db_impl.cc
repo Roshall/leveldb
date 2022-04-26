@@ -880,7 +880,7 @@ Status DBImpl::InstallCompactionResults(CompactionState* compact) {
       static_cast<long long>(compact->total_bytes));
 
   // Add compaction outputs
-  compact->compaction->AddInputDeletions(compact->compaction->edit());
+  compact->compaction->AddInputDeletions(compact->compaction->edit(), versions_);
   const int level = compact->compaction->level();
   for (size_t i = 0; i < compact->outputs.size(); i++) {
     const CompactionState::Output& out = compact->outputs[i];

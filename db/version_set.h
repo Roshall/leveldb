@@ -164,6 +164,19 @@ class Version {
   int compaction_level_;
 };
 
+class ScoresCmp {
+ public:
+  bool operator()(const FileMetaData* lhs, const FileMetaData* rhs) const {
+    if (lhs->scores.write < rhs->scores.write) {
+      return true;
+    }
+    if (lhs == rhs) {
+      return lhs->number < rhs->number;
+    }
+    return false;
+  }
+};
+
 class VersionSet {
  public:
   VersionSet(const std::string& dbname, const Options* options,
@@ -269,6 +282,16 @@ class VersionSet {
   };
   const char* LevelSummary(LevelSummaryStorage* scratch) const;
 
+  // level start from 2
+  void ScoreDelete(int level, FileMetaData* fmd) {
+      score_set_[level].erase(fmd);
+  }
+
+//  level start from 2
+  void ScoreInsert(int level, FileMetaData* fmd) {
+      score_set_[level].insert(fmd);
+  }
+
  private:
   class Builder;
 
@@ -310,6 +333,10 @@ class VersionSet {
   Version dummy_versions_;  // Head of circular doubly-linked list of versions.
   Version* current_;        // == dummy_versions_.prev_
 
+  // For hotness aware compaction we use set (from level 2 to max level) to fast find the
+  // least hot sstable.
+  std::set<FileMetaData*, ScoresCmp> score_set_[config::kNumLevels - 2];
+
   // Per-level key at which the next compaction at that level should start.
   // Either an empty string, or a valid InternalKey.
   std::string compact_pointer_[config::kNumLevels];
@@ -342,7 +369,7 @@ class Compaction {
   bool IsTrivialMove() const;
 
   // Add all inputs to this compaction as delete operations to *edit.
-  void AddInputDeletions(VersionEdit* edit);
+  void AddInputDeletions(VersionEdit* edit, VersionSet* vset);
 
   // Returns true if the information we have available guarantees that
   // the compaction is producing data in "level+1" for which no data exists

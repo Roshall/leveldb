@@ -665,6 +665,8 @@ class VersionSet::Builder {
 
       levels_[level].deleted_files.erase(f->number);
       levels_[level].added_files->insert(f);
+
+      if (level >=2) vset_->ScoreInsert(level-2, f);
     }
   }
 
@@ -1278,13 +1280,16 @@ Compaction* VersionSet::PickCompaction() {
 //    }
 
     // Pick the coldest file
-    // TODO(lu-guang): store the list in VersionSet?
-    auto iter = std::min_element(current_->files_[level].cbegin(),
-                                 current_->files_[level].cend(),
-                                 [](auto lhs, auto rhs) {
-                                   return lhs->scores.write < rhs->scores.write;
-                                 });
-    c->inputs_[0].push_back(*iter);
+    if (level < 2) {
+      auto iter = std::min_element(
+          current_->files_[level].cbegin(), current_->files_[level].cend(),
+          [](auto lhs, auto rhs) {
+            return lhs->scores.write < rhs->scores.write;
+          });
+      c->inputs_[0].push_back(*iter);
+    } else {
+      c->inputs_[0].push_back(*score_set_[level-2].begin());
+    }
 
   } else if (seek_compaction) {
     level = current_->file_to_compact_level_;
@@ -1516,10 +1521,12 @@ bool Compaction::IsTrivialMove() const {
               MaxGrandParentOverlapBytes(vset->options_));
 }
 
-void Compaction::AddInputDeletions(VersionEdit* edit) {
+void Compaction::AddInputDeletions(VersionEdit* edit, VersionSet* vset) {
   for (int which = 0; which < 2; which++) {
-    for (size_t i = 0; i < inputs_[which].size(); i++) {
-      edit->RemoveFile(level_ + which, inputs_[which][i]->number);
+    const int level = level_ + which;
+    for (auto& input_file: inputs_[which]) {
+      edit->RemoveFile(level, input_file->number);
+      if (level >= 2) vset->ScoreDelete(level-2, input_file);
     }
   }
 }
