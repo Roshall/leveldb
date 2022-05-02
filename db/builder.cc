@@ -36,8 +36,6 @@ Status BuildTable(const std::string& dbname, Env* env, const Options& options,
     for (; iter->Valid(); iter->Next()) {
       key = iter->key();
       value = iter->value();
-      // TODO(lu-guang): Maybe we should consider average score
-      //  otherwise, the policy will prefer sstable with more keys
       if (!value.empty()) {// a non-deleted key, update scores
         auto score_raw = static_cast<uint8_t>(value[value.size()-1]);
         scores.write += score_raw & 0x7;
@@ -53,6 +51,10 @@ Status BuildTable(const std::string& dbname, Env* env, const Options& options,
     s = builder->Finish();
     if (s.ok()) {
       meta->file_size = builder->FileSize();
+      auto key_num = builder->NumEntries();
+      // the average score and we don't want to use float
+      scores.write = (scores.write << 10) / key_num;
+      scores.read = (scores.read << 10) / key_num;
       meta->scores = scores;
       assert(meta->file_size > 0);
     }

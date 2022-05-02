@@ -832,6 +832,12 @@ Status DBImpl::FinishCompactionOutputFile(CompactionState* compact,
   const uint64_t output_number = compact->current_output()->number;
   assert(output_number != 0);
 
+  // the average score and we don't want to use float
+  auto key_num = compact->builder->NumEntries();
+  Scores* score_p = &compact->current_output()->scores;
+  score_p->write = (score_p->write << 10) / key_num;
+  score_p->read = (score_p->read << 10) / key_num;
+
   // Check for iterator errors
   Status s = input->status();
   const uint64_t current_entries = compact->builder->NumEntries();
@@ -919,7 +925,7 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
   std::string current_user_key;
   bool has_current_user_key = false;
   SequenceNumber last_sequence_for_key = kMaxSequenceNumber;
-  Scores scores{};
+  Scores* scores_p{};
   while (input->Valid() && !shutting_down_.load(std::memory_order_acquire)) {
     // Prioritize immutable compaction work
     if (has_imm_.load(std::memory_order_relaxed)) {
@@ -937,7 +943,6 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
     Slice key = input->key();
     if (compact->compaction->ShouldStopBefore(key) &&
         compact->builder != nullptr) {
-      compact->current_output()->scores = scores;
       status = FinishCompactionOutputFile(compact, input);
       if (!status.ok()) {
         break;
@@ -993,7 +998,7 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
       // Open output file if necessary
       if (compact->builder == nullptr) {
         status = OpenCompactionOutputFile(compact);
-        scores.clear();
+        scores_p = &compact->current_output()->scores;
         if (!status.ok()) {
           break;
         }
@@ -1005,15 +1010,14 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
       auto value = input->value();
       if (!value.empty()) { // non-deleted
         auto score_raw = static_cast<uint8_t>(value[value.size()-1]);
-        scores.write +=  score_raw & 0x7;
-        scores.read += score_raw >> 3;
+        scores_p->write +=  score_raw & 0x7;
+        scores_p->read += score_raw >> 3;
       }
       compact->builder->Add(key, value);
 
       // Close output file if it is big enough
       if (compact->builder->FileSize() >=
           compact->compaction->MaxOutputFileSize()) {
-        compact->current_output()->scores = scores;
         status = FinishCompactionOutputFile(compact, input);
         if (!status.ok()) {
           break;
@@ -1028,7 +1032,6 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
     status = Status::IOError("Deleting DB during compaction");
   }
   if (status.ok() && compact->builder != nullptr) {
-    compact->current_output()->scores = scores;
     status = FinishCompactionOutputFile(compact, input);
   }
   if (status.ok()) {
