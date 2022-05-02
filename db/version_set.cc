@@ -665,8 +665,6 @@ class VersionSet::Builder {
 
       levels_[level].deleted_files.erase(f->number);
       levels_[level].added_files->insert(f);
-
-      if (level >=2) vset_->ScoreInsert(level-2, f);
     }
   }
 
@@ -728,6 +726,7 @@ class VersionSet::Builder {
       }
       f->refs++;
       files->push_back(f);
+      if (level >= 2) vset_->ScoreInsert(level-2, f);
     }
   }
 };
@@ -1280,16 +1279,19 @@ Compaction* VersionSet::PickCompaction() {
 //    }
 
     // Pick the coldest file
+    FileMetaData* file_meta;
     if (level < 2) {
-      auto iter = std::min_element(
+      file_meta = *std::min_element(
           current_->files_[level].cbegin(), current_->files_[level].cend(),
           [](auto lhs, auto rhs) {
             return lhs->scores.write < rhs->scores.write;
           });
-      c->inputs_[0].push_back(*iter);
+      c->inputs_[0].push_back(file_meta);
     } else {
-      c->inputs_[0].push_back(*score_set_[level-2].begin());
+      file_meta = *score_set_[level-2].begin();
+      c->inputs_[0].push_back(file_meta);
     }
+    Log(options_->info_log, "Pick file: #%lu%%%u@%d\n", file_meta->number, file_meta->scores.write, level);
 
   } else if (seek_compaction) {
     level = current_->file_to_compact_level_;

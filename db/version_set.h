@@ -24,6 +24,10 @@
 #include "port/port.h"
 #include "port/thread_annotations.h"
 
+#if 1
+#include "leveldb_hot/env.h"
+#endif
+
 namespace leveldb_hot {
 
 namespace log {
@@ -284,15 +288,23 @@ class VersionSet {
 
   // level start from 2
   void ScoreDelete(int level, FileMetaData* fmd) {
-      score_set_[level].erase(fmd);
+    score_set_[level].erase(fmd);
+#if 1
+    Log(options_->info_log, "scoreSet delete: #%lu%%%d@%d", fmd->number,
+        fmd->scores.write, level+2);
+#endif
   }
 
 //  level start from 2
   void ScoreInsert(int level, FileMetaData* fmd) {
       score_set_[level].insert(fmd);
+#if 1
+      Log(options_->info_log, "scoreSet add: #%lu%%%d@%d", fmd->number,
+          fmd->scores.write, level+2);
+#endif
   }
 
- private:
+  private:
   class Builder;
 
   friend class Compaction;
