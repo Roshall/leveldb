@@ -734,7 +734,9 @@ void DBImpl::BackgroundCompaction() {
     // Move file to next level
     assert(c->num_input_files(0) == 1);
     FileMetaData* f = c->input(0, 0);
-    c->edit()->RemoveFile(c->level(), f->number);
+    auto level = c->level();
+    c->edit()->RemoveFile(level, f->number);
+    if (level >= 2) versions_->ScoreDelete(level - 2, f);
     c->edit()->AddFile(c->level() + 1, f->number, f->file_size, f->smallest,
                        f->largest, f->scores);
     status = versions_->LogAndApply(c->edit(), &mutex_);

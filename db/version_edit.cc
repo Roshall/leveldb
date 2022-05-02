@@ -79,6 +79,9 @@ void VersionEdit::EncodeTo(std::string* dst) const {
     PutVarint32(dst, new_files_[i].first);  // level
     PutVarint64(dst, f.number);
     PutVarint64(dst, f.file_size);
+    // hotness-aware score
+    PutVarint32(dst, f.scores.write);
+    PutVarint32(dst, f.scores.read);
     PutLengthPrefixedSlice(dst, f.smallest.Encode());
     PutLengthPrefixedSlice(dst, f.largest.Encode());
   }
@@ -161,7 +164,7 @@ Status VersionEdit::DecodeFrom(const Slice& src) {
 
       case kCompactPointer:
         if (GetLevel(&input, &level) && GetInternalKey(&input, &key)) {
-          compact_pointers_.push_back(std::make_pair(level, key));
+          compact_pointers_.emplace_back(level, key);
         } else {
           msg = "compaction pointer";
         }
@@ -178,9 +181,12 @@ Status VersionEdit::DecodeFrom(const Slice& src) {
       case kNewFile:
         if (GetLevel(&input, &level) && GetVarint64(&input, &f.number) &&
             GetVarint64(&input, &f.file_size) &&
+            // hotness-aware scores
+            GetVarint32(&input, &f.scores.write) &&
+            GetVarint32(&input, &f.scores.read) &&
             GetInternalKey(&input, &f.smallest) &&
             GetInternalKey(&input, &f.largest)) {
-          new_files_.push_back(std::make_pair(level, f));
+          new_files_.emplace_back(level, f);
         } else {
           msg = "new-file entry";
         }
