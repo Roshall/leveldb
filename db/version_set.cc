@@ -679,6 +679,16 @@ class VersionSet::Builder {
       std::vector<FileMetaData*>::const_iterator base_iter = base_files.begin();
       std::vector<FileMetaData*>::const_iterator base_end = base_files.end();
       const FileSet* added_files = levels_[level].added_files;
+      // score insert is here because when recovering from manifest file
+      // multiple edits are applied at once.
+      if (level >= 2) {
+        for (const auto f : *added_files) {
+          // This check is necessary when recovering from manifest file
+          if (levels_[level].deleted_files.find(f->number) == levels_[level].deleted_files.end()) {
+            vset_->ScoreInsert(level-2, f);
+          }
+        }
+      }
       v->files_[level].reserve(base_files.size() + added_files->size());
       for (const auto& added_file : *added_files) {
         // Add all smaller files listed in base_
@@ -726,7 +736,6 @@ class VersionSet::Builder {
       }
       f->refs++;
       files->push_back(f);
-      if (level >= 2) vset_->ScoreInsert(level-2, f);
     }
   }
 };
