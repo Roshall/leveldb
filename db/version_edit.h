@@ -16,8 +16,8 @@ namespace leveldb_hot {
 class VersionSet;
 
 struct Scores {  // hotness
-  uint32_t write;
-  uint32_t read;
+  uint32_t write{};
+  uint32_t read{};
   void clear() { write = 0; read = 0;}
 };
 
