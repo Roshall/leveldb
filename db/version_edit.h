@@ -24,6 +24,12 @@ struct Scores {  // hotness
 struct FileMetaData {
   FileMetaData() : refs(0), allowed_seeks(1 << 30), file_size(0) {}
 
+  // strictly less than
+  bool CmpWriteScore(const FileMetaData* a) const {return scores.write < a->scores.write;}
+  bool WriteScoreEqual(const FileMetaData* a) const {
+    return scores.write == a->scores.write;
+  }
+
   int refs;
   int allowed_seeks;  // Seeks allowed until compaction
   uint64_t number;

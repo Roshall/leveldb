@@ -181,6 +181,80 @@ class ScoresCmp {
   }
 };
 
+// ScoreSet consists of two part using set( for fast retrieve minimal and
+// maximal, delete and insert entry): hot and cold based on a rate threshold.
+// i.e., the proportion of hot set. It maintains this proportion dynamically.
+class ScoreSet {
+ public:
+  static ScoresCmp scores_cmp;
+
+  ScoreSet() {
+    for (auto & cold : score_cold_) {
+      cold.insert(&sentry_);
+    }
+  };
+
+  [[nodiscard]] FileMetaData* fence_element(int level) const {
+    assert(score_hot_[level].size() >= 0);
+    return *score_hot_[level].cbegin();
+  }
+
+  void Insert(int level, FileMetaData* fmd) {
+    auto fence_iter = std::prev(score_cold_[level].cend());
+    if (score_hot_[level].size() > HotSetThreshold(level)) { // hot overdoses
+      if (scores_cmp(fmd, *fence_iter)) {
+        score_cold_[level].insert(fmd);
+      } else {
+        score_hot_[level].insert(fmd);
+        auto iter = score_hot_[level].cbegin();
+        score_cold_[level].insert(score_cold_[level].cend(), *iter);
+        score_hot_[level].erase(iter);
+      }
+    } else {
+      if (scores_cmp(fmd, *fence_iter)) {
+        score_hot_[level].insert(score_hot_[level].cbegin(),*fence_iter);
+        score_cold_[level].erase(fence_iter);
+        score_cold_[level].insert(fmd);
+      } else {
+        score_hot_[level].insert(fmd);
+      }
+    }
+  }
+
+  void Delete(int level, FileMetaData* fmd) {
+    auto fence_iter = std::prev(score_cold_[level].cend());
+    if (score_hot_[level].size() > HotSetThreshold(level)) {
+      if (scores_cmp(fmd, *fence_iter) || fmd == *fence_iter) {
+        score_cold_[level].erase(fmd);
+        auto iter = score_hot_[level].cbegin();
+        score_cold_[level].insert(score_cold_[level].cend(), *iter);
+        score_hot_[level].erase(iter);
+      } else {
+        score_hot_[level].erase(fmd);
+      }
+    } else {
+      if (scores_cmp(fmd, *fence_iter) || fmd == *fence_iter) {
+        score_cold_[level].erase(fmd);
+      } else {
+        score_hot_[level].erase(fmd);
+        score_hot_[level].insert(score_hot_[level].cbegin(),*fence_iter);
+        score_cold_[level].erase(fence_iter);
+      }
+    }
+  }
+
+ private:
+  int HotSetThreshold(int level) {
+    return static_cast<int>(kRate * (score_hot_[level].size() + score_cold_[level].size()));
+  }
+
+  constexpr static double kRate{0.2};
+  static FileMetaData sentry_; // with it, no need to check empty set
+  std::set<FileMetaData*, ScoresCmp> score_hot_[config::kNumLevels - 2];
+  std::set<FileMetaData*, ScoresCmp> score_cold_[config::kNumLevels - 2];
+};
+
+
 class VersionSet {
  public:
   VersionSet(const std::string& dbname, const Options* options,
@@ -288,7 +362,7 @@ class VersionSet {
 
   // level start from 2
   void ScoreDelete(int level, FileMetaData* fmd) {
-    score_set_[level].erase(fmd);
+    score_set_.Delete(level, fmd);
 #if 1
     Log(options_->info_log, "scoreSet delete: #%lu%%%d@%d", fmd->number,
         fmd->scores.write, level+2);
@@ -297,7 +371,7 @@ class VersionSet {
 
 //  level start from 2
   void ScoreInsert(int level, FileMetaData* fmd) {
-      score_set_[level].insert(fmd);
+    score_set_.Insert(level, fmd);
 #if 1
       Log(options_->info_log, "scoreSet add: #%lu%%%d@%d", fmd->number,
           fmd->scores.write, level+2);
@@ -347,7 +421,8 @@ class VersionSet {
 
   // For hotness aware compaction we use set (from level 2 to max level) to fast find the
   // least hot sstable.
-  std::set<FileMetaData*, ScoresCmp> score_set_[config::kNumLevels - 2];
+  ScoreSet score_set_;
+
 
   // Per-level key at which the next compaction at that level should start.
   // Either an empty string, or a valid InternalKey.

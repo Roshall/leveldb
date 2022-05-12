@@ -21,6 +21,9 @@
 
 namespace leveldb_hot {
 
+ScoresCmp ScoreSet::scores_cmp{};
+FileMetaData ScoreSet::sentry_{};
+
 static size_t TargetFileSize(const Options* options) {
   return options->max_file_size;
 }
@@ -1273,33 +1276,55 @@ Compaction* VersionSet::PickCompaction() {
     assert(level + 1 < config::kNumLevels);
     c = new Compaction(options_, level);
 
-    // Pick the first file that comes after compact_pointer_[level]
-//    for (size_t i = 0; i < current_->files_[level].size(); i++) {
-//      FileMetaData* f = current_->files_[level][i];
-//      if (compact_pointer_[level].empty() ||
-//          icmp_.Compare(f->largest.Encode(), compact_pointer_[level]) > 0) {
-//        c->inputs_[0].push_back(f);
-//        break;
-//      }
-//    }
-//    if (c->inputs_[0].empty()) {
-//      // Wrap-around to the beginning of the key space
-//      c->inputs_[0].push_back(current_->files_[level][0]);
-//    }
-
-    // Pick the coldest file
-    FileMetaData* file_meta;
-    if (level < 2) {
+    FileMetaData* file_meta{};
+    if (level == 0) { // Pick the coldest file
       file_meta = *std::min_element(
           current_->files_[level].cbegin(), current_->files_[level].cend(),
           [](auto lhs, auto rhs) {
             return lhs->scores.write < rhs->scores.write;
           });
-      c->inputs_[0].push_back(file_meta);
-    } else {
-      file_meta = *score_set_[level-2].begin();
-      c->inputs_[0].push_back(file_meta);
+    } else { // hybrid
+      uint32_t fence_score{std::numeric_limits<uint32_t>::max()};
+      auto& files = current_->files_[level];
+      const int hot_fence =  files.size()* 0.8;
+      if (hot_fence > 0) { // step one, find the fence element
+        if (level == 1) {
+          // select largest kth element of a vector
+          std::vector<FileMetaData*> hot_ctn(&files[0], &files[hot_fence]);
+          auto iter = std::min_element(hot_ctn.begin(), hot_ctn.end(), ScoreSet::scores_cmp);
+          fence_score = (*iter)->scores.write;
+          for (int i = hot_fence; i < files.size(); ++i) {
+            if (files[i]->scores.write > fence_score) {
+              *iter = files[i];
+              iter = std::min_element(hot_ctn.begin(), hot_ctn.end(), ScoreSet::scores_cmp);
+              fence_score = (*iter)->scores.write;
+            }
+          }
+        } else {
+          fence_score = score_set_.fence_element(level-2)->scores.write;
+        }
+      }
+
+      // step two, use normal method
+      for (auto f: current_->files_[level]) {
+        if (f->scores.write <= fence_score && (compact_pointer_[level].empty() ||
+            icmp_.Compare(f->largest.Encode(), compact_pointer_[level])) > 0) {
+          file_meta = f;
+          break;
+        }
+      }
+      if (file_meta) {
+        // Wrap-around to the beginning of the key space
+        for (auto f: current_->files_[level]) {
+          if (f->scores.write <= fence_score) {
+            file_meta = f;
+            break;
+          }
+        }
+      }
     }
+    c->inputs_[0].push_back(file_meta);
+
     Log(options_->info_log, "Pick file: #%lu%%%u@%d\n", file_meta->number, file_meta->scores.write, level);
 
   } else if (seek_compaction) {
