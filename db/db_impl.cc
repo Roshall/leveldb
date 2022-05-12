@@ -838,7 +838,7 @@ Status DBImpl::FinishCompactionOutputFile(CompactionState* compact,
   auto key_num = compact->builder->NumEntries();
   Scores* score_p = &compact->current_output()->scores;
   score_p->write = (score_p->write << 10) / key_num;
-  score_p->read = (score_p->read << 10) / key_num;
+//  score_p->read = (score_p->read << 10) / key_num;
 
   // Check for iterator errors
   Status s = input->status();
@@ -1011,9 +1011,9 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
       compact->current_output()->largest.DecodeFrom(key);
       auto value = input->value();
       if (!value.empty()) { // non-deleted
-        auto score_raw = static_cast<uint8_t>(value[value.size()-1]);
+        auto score_raw = value[value.size()-1];
         scores_p->write +=  score_raw & 0x7;
-        scores_p->read += score_raw >> 3;
+//        scores_p->read += score_raw >> 3;
       }
       compact->builder->Add(key, value);
 

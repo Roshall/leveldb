@@ -37,9 +37,9 @@ Status BuildTable(const std::string& dbname, Env* env, const Options& options,
       key = iter->key();
       value = iter->value();
       if (!value.empty()) {// a non-deleted key, update scores
-        auto score_raw = static_cast<uint8_t>(value[value.size()-1]);
+        auto score_raw = value[value.size()-1];
         scores.write += score_raw & 0x7;
-        scores.read += score_raw >> 3;
+//        scores.read += score_raw >> 3;
       }
       builder->Add(key, value);
     }
@@ -54,7 +54,7 @@ Status BuildTable(const std::string& dbname, Env* env, const Options& options,
       auto key_num = builder->NumEntries();
       // the average score and we don't want to use float
       scores.write = (scores.write << 10) / key_num;
-      scores.read = (scores.read << 10) / key_num;
+//      scores.read = (scores.read << 10) / key_num;
       meta->scores = scores;
       assert(meta->file_size > 0);
     }
