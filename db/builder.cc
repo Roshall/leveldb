@@ -51,9 +51,9 @@ Status BuildTable(const std::string& dbname, Env* env, const Options& options,
     s = builder->Finish();
     if (s.ok()) {
       meta->file_size = builder->FileSize();
-      auto key_num = builder->NumEntries();
+//      auto key_num = builder->NumEntries();
       // the average score and we don't want to use float
-      scores.write = (scores.write << 10) / key_num;
+//      scores.write = (scores.write << 10) / key_num;
 //      scores.read = (scores.read << 10) / key_num;
       meta->scores = scores;
       assert(meta->file_size > 0);

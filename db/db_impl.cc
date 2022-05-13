@@ -758,6 +758,14 @@ void DBImpl::BackgroundCompaction() {
     c->ReleaseInputs();
     RemoveObsoleteFiles();
   }
+#if 0
+  auto level = c->level();
+  if (level >= 2) {
+    auto [hs, cs] = versions_->ScoreSetSize(level-2);
+    Log(options_.info_log, "score_set(h&c): %lu&%lu", hs, cs);
+  }
+
+#endif
   delete c;
 
   if (status.ok()) {
@@ -835,9 +843,9 @@ Status DBImpl::FinishCompactionOutputFile(CompactionState* compact,
   assert(output_number != 0);
 
   // the average score and we don't want to use float
-  auto key_num = compact->builder->NumEntries();
-  Scores* score_p = &compact->current_output()->scores;
-  score_p->write = (score_p->write << 10) / key_num;
+//  auto key_num = compact->builder->NumEntries();
+//  Scores* score_p = &compact->current_output()->scores;
+//  score_p->write = (score_p->write << 10) / key_num;
 //  score_p->read = (score_p->read << 10) / key_num;
 
   // Check for iterator errors
