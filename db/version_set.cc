@@ -1276,6 +1276,21 @@ Compaction* VersionSet::PickCompaction() {
     assert(level + 1 < config::kNumLevels);
     c = new Compaction(options_, level);
 
+    // Pick the first file that comes after compact_pointer_[level]
+//    for (size_t i = 0; i < current_->files_[level].size(); i++) {
+//      FileMetaData* f = current_->files_[level][i];
+//      if (compact_pointer_[level].empty() ||
+//          icmp_.Compare(f->largest.Encode(), compact_pointer_[level]) > 0) {
+//        c->inputs_[0].push_back(f);
+//        break;
+//      }
+//    }
+//    if (c->inputs_[0].empty()) {
+//      // Wrap-around to the beginning of the key space
+//      c->inputs_[0].push_back(current_->files_[level][0]);
+//    }
+//    auto file_meta = c->inputs_[0].back();
+
     FileMetaData* file_meta{};
     if (level == 0) { // Pick the coldest file
       file_meta = *std::min_element(
@@ -1286,7 +1301,7 @@ Compaction* VersionSet::PickCompaction() {
     } else { // hybrid
       uint32_t fence_score{std::numeric_limits<uint32_t>::max()};
       auto& files = current_->files_[level];
-      const int hot_fence =  files.size()* 0.8;
+      const int hot_fence =  files.size()* 0.2;
       if (hot_fence > 0) { // step one, find the fence element
         if (level == 1) {
           // select largest kth element of a vector
@@ -1313,6 +1328,7 @@ Compaction* VersionSet::PickCompaction() {
           break;
         }
       }
+
       if (file_meta) {
         // Wrap-around to the beginning of the key space
         for (auto f: current_->files_[level]) {

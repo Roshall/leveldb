@@ -321,6 +321,17 @@ if(LEVELDB_HOT_BUILD_TESTS)
       "util/testutil.cc"
       "util/testutil.h"
   )
+  add_executable(leveldb_hot_validation "")
+  target_sources(leveldb_hot_validation
+      PRIVATE
+      db/validation.cc
+  )
+  target_link_libraries(leveldb_hot_validation leveldb_hot)
+  target_compile_definitions(leveldb_hot_validation
+      PRIVATE
+      ${LEVELDB_HOT_PLATFORM_NAME}=1
+  )
+
   if(NOT BUILD_SHARED_LIBS)
     target_sources(leveldb_hot_tests
       PRIVATE

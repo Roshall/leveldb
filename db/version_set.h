@@ -174,7 +174,7 @@ class ScoresCmp {
     if (lhs->scores.write < rhs->scores.write) {
       return true;
     }
-    if (lhs == rhs) {
+    if (lhs->scores.write == rhs->scores.write) {
       return lhs->number < rhs->number;
     }
     return false;
@@ -193,11 +193,6 @@ class ScoreSet {
       cold.insert(&sentry_);
     }
   };
-
-  [[nodiscard]] FileMetaData* fence_element(int level) const {
-    assert(score_hot_[level].size() >= 0);
-    return *score_hot_[level].cbegin();
-  }
 
   void Insert(int level, FileMetaData* fmd) {
     auto fence_iter = std::prev(score_cold_[level].cend());
@@ -242,6 +237,12 @@ class ScoreSet {
       }
     }
   }
+
+  [[nodiscard]] FileMetaData* fence_element(int level) const {
+    assert(score_hot_[level].size() >= 0);
+    return *score_hot_[level].cbegin();
+  }
+  [[nodiscard]] std::pair<size_t , size_t> size(int level) const { return {score_hot_[level].size(), score_cold_[level].size()};}
 
  private:
   int HotSetThreshold(int level) {
@@ -377,6 +378,8 @@ class VersionSet {
           fmd->scores.write, level+2);
 #endif
   }
+
+  auto ScoreSetSize(int level) { return score_set_.size(level);}
 
   private:
   class Builder;
