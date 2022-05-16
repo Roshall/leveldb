@@ -1292,15 +1292,14 @@ Compaction* VersionSet::PickCompaction() {
 //    auto file_meta = c->inputs_[0].back();
 
     FileMetaData* file_meta{};
+    auto& files = current_->files_[level];
     if (level == 0) { // Pick the coldest file
       file_meta = *std::min_element(
-          current_->files_[level].cbegin(), current_->files_[level].cend(),
-          [](auto lhs, auto rhs) {
+          files.cbegin(), files.cend(), [](auto lhs, auto rhs) {
             return lhs->scores.write < rhs->scores.write;
           });
     } else { // hybrid
       uint32_t fence_score{std::numeric_limits<uint32_t>::max()};
-      auto& files = current_->files_[level];
       const int hot_fence =  files.size()* 0.2;
       if (hot_fence > 0) { // step one, find the fence element
         if (level == 1) {
@@ -1323,13 +1322,13 @@ Compaction* VersionSet::PickCompaction() {
       // step two, use normal method
       for (auto f: current_->files_[level]) {
         if (f->scores.write <= fence_score && (compact_pointer_[level].empty() ||
-            icmp_.Compare(f->largest.Encode(), compact_pointer_[level])) > 0) {
+            icmp_.Compare(f->largest.Encode(), compact_pointer_[level]) > 0)) {
           file_meta = f;
           break;
         }
       }
 
-      if (file_meta) {
+      if (file_meta == nullptr) {
         // Wrap-around to the beginning of the key space
         for (auto f: current_->files_[level]) {
           if (f->scores.write <= fence_score) {
