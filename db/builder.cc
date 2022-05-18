@@ -33,6 +33,7 @@ Status BuildTable(const std::string& dbname, Env* env, const Options& options,
     Slice key;
     Slice value;
     Scores scores{};
+    SequenceNumber largest_seqno{};
     for (; iter->Valid(); iter->Next()) {
       key = iter->key();
       value = iter->value();
@@ -41,6 +42,8 @@ Status BuildTable(const std::string& dbname, Env* env, const Options& options,
         scores.write += score_raw & 0x7;
 //        scores.read += score_raw >> 3;
       }
+      auto maybe = DecodeSeq(key);
+      if (maybe && *maybe > largest_seqno) largest_seqno = *maybe;
       builder->Add(key, value);
     }
     if (!key.empty()) {
@@ -56,6 +59,7 @@ Status BuildTable(const std::string& dbname, Env* env, const Options& options,
 //      scores.write = (scores.write << 10) / key_num;
 //      scores.read = (scores.read << 10) / key_num;
       meta->scores = scores;
+      meta->largest_seqno = largest_seqno;
       assert(meta->file_size > 0);
     }
     delete builder;

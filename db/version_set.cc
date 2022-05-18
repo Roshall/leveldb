@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <cstdio>
+#include <unordered_map>
 
 #include "db/filename.h"
 #include "db/log_reader.h"
@@ -1100,7 +1101,8 @@ Status VersionSet::WriteSnapshot(log::Writer* log) {
     const std::vector<FileMetaData*>& files = current_->files_[level];
     for (size_t i = 0; i < files.size(); i++) {
       const FileMetaData* f = files[i];
-      edit.AddFile(level, f->number, f->file_size, f->smallest, f->largest, f->scores);
+      edit.AddFile(level, f->number, f->file_size, f->smallest, f->largest,
+                   f->largest_seqno, f->scores);
     }
   }
 
@@ -1262,6 +1264,106 @@ Iterator* VersionSet::MakeInputIterator(Compaction* c) {
   return result;
 }
 
+
+namespace {
+// Sort `temp` based on ratio of overlapping size over file size
+FileMetaData* SortFileByOverlappingRatio(
+    const InternalKeyComparator& icmp, std::vector<FileMetaData*>& files,
+    const std::vector<FileMetaData*>& next_level_files) {
+std::pair<uint64_t, FileMetaData*> least_overlapping{
+    std::numeric_limits<uint64_t>::max(), files[0]};
+auto next_level_it = next_level_files.begin();
+
+
+  for (auto& file : files) {
+    uint64_t overlapping_bytes = 0;
+    // Skip files in next level that is smaller than current file
+    while (next_level_it != next_level_files.end() &&
+           icmp.Compare((*next_level_it)->largest, file->smallest) < 0) {
+      next_level_it++;
+    }
+
+    while (next_level_it != next_level_files.end() &&
+           icmp.Compare((*next_level_it)->smallest, file->largest) < 0) {
+      overlapping_bytes += (*next_level_it)->file_size;
+
+      if (icmp.Compare((*next_level_it)->largest, file->largest) > 0) {
+        // next level file cross large boundary of current file.
+        break;
+      }
+      next_level_it++;
+    }
+
+
+    assert(file->file_size != 0);
+    // average
+    overlapping_bytes = overlapping_bytes * 1024U / file->file_size;
+    if (least_overlapping.first > overlapping_bytes) {
+      least_overlapping.first = overlapping_bytes;
+      least_overlapping.second = file;
+    }
+  }
+  return least_overlapping.second;
+}
+
+FileMetaData* HotAwarePolicy(int level, std::vector<FileMetaData*>& files,
+                             const InternalKeyComparator& icmp,
+                             ScoreSet& score_set,
+                             const std::string& compaction_fence) {
+  FileMetaData* file_meta{};
+  if (level == 0) { // Pick the coldest file
+    file_meta = *std::min_element(
+        files.cbegin(), files.cend(), [](auto lhs, auto rhs) {
+          return lhs->scores.write < rhs->scores.write;
+        });
+  } else { // hybrid
+    uint32_t fence_score{std::numeric_limits<uint32_t>::max()};
+    const int hot_fence =  files.size()* 0.2;
+    if (hot_fence > 0) { // step one, find the fence element
+      if (level == 1) {
+        // select largest kth element of a vector
+        std::vector<FileMetaData*> hot_ctn(&files[0], &files[hot_fence]);
+        auto iter = std::min_element(hot_ctn.begin(), hot_ctn.end(), ScoreSet::scores_cmp);
+        fence_score = (*iter)->scores.write;
+        for (int i = hot_fence; i < files.size(); ++i) {
+          if (files[i]->scores.write > fence_score) {
+            *iter = files[i];
+            iter = std::min_element(hot_ctn.begin(), hot_ctn.end(), ScoreSet::scores_cmp);
+            fence_score = (*iter)->scores.write;
+          }
+        }
+      } else {
+        fence_score = score_set.fence_element(level-2)->scores.write;
+      }
+    }
+
+    // step two, use normal method
+    // 1. find the first place scores less than fence's
+    // 2. round-robin
+    // 3. find the first place scores less than fence's start from step 2
+    auto inner_cmp = [fence_score](auto file_meta) {
+      return file_meta->scores.write <= fence_score;
+    };
+    auto iter_start = std::find_if(files.begin(), files.end(), inner_cmp);
+    assert(iter_start != files.end());
+    file_meta = *iter_start;
+    if (!compaction_fence.empty()) {
+      auto iter = std::upper_bound(
+          iter_start, files.end(), compaction_fence,
+          [&](const std::string& val, FileMetaData* entry) {
+            return icmp.Compare(val, entry->largest.Encode()) < 0;
+          });
+      iter = std::find_if(iter, files.end(), inner_cmp);
+      if (iter != files.end()) file_meta = *iter;
+    }
+
+  }
+  return file_meta;
+}
+}  // namespace
+
+
+
 Compaction* VersionSet::PickCompaction() {
   Compaction* c;
   int level;
@@ -1293,51 +1395,42 @@ Compaction* VersionSet::PickCompaction() {
 
     FileMetaData* file_meta{};
     auto& files = current_->files_[level];
-    if (level == 0) { // Pick the coldest file
-      file_meta = *std::min_element(
-          files.cbegin(), files.cend(), [](auto lhs, auto rhs) {
-            return lhs->scores.write < rhs->scores.write;
-          });
-    } else { // hybrid
-      uint32_t fence_score{std::numeric_limits<uint32_t>::max()};
-      const int hot_fence =  files.size()* 0.2;
-      if (hot_fence > 0) { // step one, find the fence element
-        if (level == 1) {
-          // select largest kth element of a vector
-          std::vector<FileMetaData*> hot_ctn(&files[0], &files[hot_fence]);
-          auto iter = std::min_element(hot_ctn.begin(), hot_ctn.end(), ScoreSet::scores_cmp);
-          fence_score = (*iter)->scores.write;
-          for (int i = hot_fence; i < files.size(); ++i) {
-            if (files[i]->scores.write > fence_score) {
-              *iter = files[i];
-              iter = std::min_element(hot_ctn.begin(), hot_ctn.end(), ScoreSet::scores_cmp);
-              fence_score = (*iter)->scores.write;
-            }
-          }
+    switch (options_->file_picking) {
+      case kRoundRobin:
+        // TODO (lu-guang): test
+        file_meta = files[0];
+        if (!compact_pointer_[level].empty()) {
+          auto iter = std::upper_bound(
+              files.begin(), files.end(), compact_pointer_[level],
+              [&](const std::string& val, FileMetaData* entry) {
+                return icmp_.Compare(val, entry->largest.Encode()) < 0;
+              });
+          if (iter != files.end()) file_meta = *iter;
+        }
+        break;
+      case kColdest:
+        // TODO (lu-guang): test
+        file_meta = HotAwarePolicy(level, files, icmp_, score_set_, compact_pointer_[level]);
+        break;
+      case kLeastOverLapping:
+        // TODO (lu-guang): test
+        if (current_->files_[level + 2].empty()) { // no grandparents
+          file_meta = SortFileByOverlappingRatio(icmp_, files,
+                                                 current_->files_[level + 1]);
         } else {
-          fence_score = score_set_.fence_element(level-2)->scores.write;
+          file_meta = SortFileByOverlappingRatio(icmp_, files,
+                                                 current_->files_[level + 2]);
         }
-      }
-
-      // step two, use normal method
-      for (auto f: current_->files_[level]) {
-        if (f->scores.write <= fence_score && (compact_pointer_[level].empty() ||
-            icmp_.Compare(f->largest.Encode(), compact_pointer_[level]) > 0)) {
-          file_meta = f;
-          break;
-        }
-      }
-
-      if (file_meta == nullptr) {
-        // Wrap-around to the beginning of the key space
-        for (auto f: current_->files_[level]) {
-          if (f->scores.write <= fence_score) {
-            file_meta = f;
-            break;
-          }
-        }
-      }
+        break ;
+      case kColdestRange:
+        // TODO (lu-guang): mast add and maintain largest sequence number in FileMeta
+        file_meta = *std::min_element(
+            files.begin(), files.end(), [](auto lhs, auto rhs) {
+              return lhs->largest_seqno < rhs->largest_seqno;
+            });
+        break ;
     }
+
     c->inputs_[0].push_back(file_meta);
 
     Log(options_->info_log, "Pick file: #%lu%%%u@%d\n", file_meta->number, file_meta->scores.write, level);

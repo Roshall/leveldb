@@ -25,15 +25,16 @@ struct FileMetaData {
   FileMetaData() : refs(0), allowed_seeks(1 << 30), file_size(0) {}
 
   // strictly less than
-  bool CmpWriteScore(const FileMetaData* a) const {return scores.write < a->scores.write;}
-  bool WriteScoreEqual(const FileMetaData* a) const {
-    return scores.write == a->scores.write;
-  }
+//  bool CmpWriteScore(const FileMetaData* a) const {return scores.write < a->scores.write;}
+//  bool WriteScoreEqual(const FileMetaData* a) const {
+//    return scores.write == a->scores.write;
+//  }
 
   int refs;
   int allowed_seeks;  // Seeks allowed until compaction
   uint64_t number;
   uint64_t file_size;    // File size in bytes
+  SequenceNumber largest_seqno{};
   Scores scores;
   InternalKey smallest;  // Smallest internal key served by table
   InternalKey largest;   // Largest internal key served by table
@@ -75,12 +76,13 @@ class VersionEdit {
   // REQUIRES: "smallest" and "largest" are smallest and largest keys in file
   void AddFile(int level, uint64_t file, uint64_t file_size,
                const InternalKey& smallest, const InternalKey& largest,
-               Scores scores) {
+               uint64_t largest_sqno, Scores scores) {
     FileMetaData f;
     f.number = file;
     f.file_size = file_size;
     f.smallest = smallest;
     f.largest = largest;
+    f.largest_seqno = largest_sqno;
     f.scores = scores;
     new_files_.emplace_back(level, f);
   }

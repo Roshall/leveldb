@@ -7,6 +7,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <optional>
 #include <string>
 
 #include "leveldb_hot/comparator.h"
@@ -168,6 +169,11 @@ inline int InternalKeyComparator::Compare(const InternalKey& a,
   return Compare(a.Encode(), b.Encode());
 }
 
+inline std::optional<SequenceNumber> DecodeSeq(const Slice& internal) {
+  const auto n = internal.size();
+  if (n < 8) return {};
+  return DecodeFixed64(internal.data() + n -8) >> 8;
+}
 inline bool ParseInternalKey(const Slice& internal_key,
                              ParsedInternalKey* result) {
   const size_t n = internal_key.size();

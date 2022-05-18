@@ -29,6 +29,20 @@ enum CompressionType {
   kSnappyCompression = 0x1
 };
 
+enum FilePickingPolicy {
+  // coldest file determined by hot score introduce from bloom value
+  kColdest,
+  // leveldb's method, good for uniform distribute key
+  kRoundRobin,
+  // Least overlapping with grandparent's level
+  // it seems better for skew update workload
+  // see "Constructing and Analyzing the LSM Compaction Design Space"
+  kLeastOverLapping,
+  // the oldest Largest timestamp, may be good for small and hot key range
+  // see: http://rocksdb.org/blog/2016/01/29/compaction_pri.html
+  kColdestRange
+};
+
 // Options to control the behavior of a database (passed to DB::Open)
 struct LEVELDB_HOT_EXPORT Options {
   // Create an Options object with default values for all fields.
@@ -129,6 +143,8 @@ struct LEVELDB_HOT_EXPORT Options {
   // incompressible, the kSnappyCompression implementation will
   // efficiently detect that and will switch to uncompressed mode.
   CompressionType compression = kSnappyCompression;
+
+  FilePickingPolicy file_picking = kColdest;
 
   // EXPERIMENTAL: If true, append to existing MANIFEST and log files
   // when a database is opened.  This can significantly speed up open.

@@ -79,6 +79,7 @@ void VersionEdit::EncodeTo(std::string* dst) const {
     PutVarint32(dst, new_files_[i].first);  // level
     PutVarint64(dst, f.number);
     PutVarint64(dst, f.file_size);
+    PutVarint64(dst, f.largest_seqno);
     // hotness-aware score
     PutVarint32(dst, f.scores.write);
     PutVarint32(dst, f.scores.read);
@@ -181,6 +182,7 @@ Status VersionEdit::DecodeFrom(const Slice& src) {
       case kNewFile:
         if (GetLevel(&input, &level) && GetVarint64(&input, &f.number) &&
             GetVarint64(&input, &f.file_size) &&
+            GetVarint64(&input, &f.largest_seqno) &&
             // hotness-aware scores
             GetVarint32(&input, &f.scores.write) &&
             GetVarint32(&input, &f.scores.read) &&

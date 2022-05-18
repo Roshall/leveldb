@@ -27,7 +27,7 @@ TEST(VersionEditTest, EncodeDecode) {
     Scores scores{100,100};
     edit.AddFile(3, kBig + 300 + i, kBig + 400 + i,
                  InternalKey("foo", kBig + 500 + i, kTypeValue),
-                 InternalKey("zoo", kBig + 600 + i, kTypeDeletion), scores);
+                 InternalKey("zoo", kBig + 600 + i, kTypeDeletion), 0, scores);
     edit.RemoveFile(4, kBig + 700 + i);
     edit.SetCompactPointer(i, InternalKey("x", kBig + 900 + i, kTypeValue));
   }

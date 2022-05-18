@@ -56,6 +56,7 @@ struct DBImpl::CompactionState {
   struct Output {
     uint64_t number;
     uint64_t file_size;
+    SequenceNumber largest_seqno;
     Scores scores;
     InternalKey smallest, largest;
   };
@@ -537,7 +538,7 @@ Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
       level = base->PickLevelForMemTableOutput(min_user_key, max_user_key);
     }
     edit->AddFile(level, meta.number, meta.file_size, meta.smallest,
-                  meta.largest, meta.scores);
+                  meta.largest, meta.largest_seqno, meta.scores);
   }
 
   CompactionStats stats;
@@ -738,7 +739,7 @@ void DBImpl::BackgroundCompaction() {
     c->edit()->RemoveFile(level, f->number);
     if (level >= 2) versions_->ScoreDelete(level - 2, f);
     c->edit()->AddFile(c->level() + 1, f->number, f->file_size, f->smallest,
-                       f->largest, f->scores);
+                       f->largest, f->largest_seqno, f->scores);
     status = versions_->LogAndApply(c->edit(), &mutex_);
     if (!status.ok()) {
       RecordBackgroundError(status);
@@ -901,7 +902,8 @@ Status DBImpl::InstallCompactionResults(CompactionState* compact) {
   for (size_t i = 0; i < compact->outputs.size(); i++) {
     const CompactionState::Output& out = compact->outputs[i];
     compact->compaction->edit()->AddFile(level + 1, out.number, out.file_size,
-                                         out.smallest, out.largest, out.scores);
+                                         out.smallest, out.largest, out.largest_seqno,
+                                         out.scores);
   }
   return versions_->LogAndApply(compact->compaction->edit(), &mutex_);
 }
@@ -936,6 +938,7 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
   bool has_current_user_key = false;
   SequenceNumber last_sequence_for_key = kMaxSequenceNumber;
   Scores* scores_p{};
+  SequenceNumber* largest_seqno_p{};
   while (input->Valid() && !shutting_down_.load(std::memory_order_acquire)) {
     // Prioritize immutable compaction work
     if (has_imm_.load(std::memory_order_relaxed)) {
@@ -1009,6 +1012,7 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
       if (compact->builder == nullptr) {
         status = OpenCompactionOutputFile(compact);
         scores_p = &compact->current_output()->scores;
+        largest_seqno_p = &compact->current_output()->largest_seqno;
         if (!status.ok()) {
           break;
         }
@@ -1022,6 +1026,9 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
         auto score_raw = value[value.size()-1];
         scores_p->write +=  score_raw & 0x7;
 //        scores_p->read += score_raw >> 3;
+      }
+      if (has_current_user_key && *largest_seqno_p < ikey.sequence) {
+        *largest_seqno_p = ikey.sequence;
       }
       compact->builder->Add(key, value);
 
